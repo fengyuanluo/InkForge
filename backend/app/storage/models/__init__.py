@@ -17,6 +17,14 @@ from app.agent_runtime.persistence.model import AgentAttachment, AgentContextCom
 from app.storage.models.character import Character
 from app.storage.models.chapter import Chapter
 from app.storage.models.chapter_summary import ChapterSummary
+from app.storage.models.corpus import (
+    CorpusDocument,
+    CorpusDocumentIndexState,
+    CorpusLibrary,
+    CorpusLibraryDocument,
+    CorpusUnit,
+    ProjectCorpusLibrary,
+)
 from app.storage.models.commit import Commit
 from app.storage.models.project import Project
 from app.storage.models.prompt_chain_version import PromptChainVersion
@@ -56,12 +64,18 @@ __all__ = [
     "Character",
     "Chapter",
     "ChapterSummary",
+    "CorpusDocument",
+    "CorpusDocumentIndexState",
+    "CorpusLibrary",
+    "CorpusLibraryDocument",
+    "CorpusUnit",
     "Commit",
     "Model",
     "ModelProvider",
     "Note",
     "NoteCategory",
     "Project",
+    "ProjectCorpusLibrary",
     "PromptChainVersion",
     "PromptEntry",
     "Revision",

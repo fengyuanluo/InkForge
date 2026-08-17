@@ -40,12 +40,14 @@ def test_runtime_tool_permissions_match_registered_user_tools() -> None:
         {"tool_name": "read_chapter", "mode": "allow"},
         {"tool_name": "read_chapter_summaries", "mode": "allow"},
         {"tool_name": "read_character", "mode": "allow"},
+        {"tool_name": "read_corpus_unit", "mode": "allow"},
         {"tool_name": "read_note", "mode": "allow"},
         {"tool_name": "read_range_summaries", "mode": "allow"},
         {"tool_name": "read_world_entry", "mode": "allow"},
         {"tool_name": "recycle_subagent", "mode": "allow"},
         {"tool_name": "reference_skill", "mode": "allow"},
         {"tool_name": "search_chapters", "mode": "allow"},
+        {"tool_name": "search_corpus", "mode": "allow"},
         {"tool_name": "update_index", "mode": "allow"},
         {"tool_name": "write_chapter", "mode": "ask"},
         {"tool_name": "write_note", "mode": "ask"},
@@ -62,5 +64,6 @@ def test_runtime_tool_permission_helpers_use_tool_names() -> None:
     assert resolve_tool_permission_key("unknown_tool") == "unknown_tool"
     assert get_default_tool_permission_mode("write_plan") == "ask"
     assert get_default_tool_permission_mode("search_chapters") == "allow"
+    assert get_default_tool_permission_mode("search_corpus") == "allow"
     assert get_default_tool_permission_mode("write_chapter") == "ask"
     assert get_default_tool_permission_mode("unknown_tool") is None

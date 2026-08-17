@@ -40,6 +40,10 @@ export function transformSettings(raw: SettingsResponse): Settings {
     indexAutoStrategy: raw.index_auto_strategy ?? "off",
     indexRerankEnabled: raw.index_rerank_enabled ?? false,
     defaultRerankModel: raw.default_rerank_model || "",
+    corpusEmbeddingModel: raw.corpus_embedding_model || "",
+    corpusRerankEnabled: raw.corpus_rerank_enabled ?? false,
+    corpusRerankModel: raw.corpus_rerank_model || "",
+    corpusIndexConcurrency: raw.corpus_index_concurrency ?? 1,
     agentBypassToolApproval: raw.agent_bypass_tool_approval ?? false,
     agentToolPermissions: (raw.agent_tool_permissions || []).map((item) => ({
       toolName: item.tool_name,

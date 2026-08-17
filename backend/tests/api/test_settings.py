@@ -48,12 +48,14 @@ EXPECTED_AGENT_TOOL_PERMISSIONS = [
     {"tool_name": "read_chapter", "mode": "allow"},
     {"tool_name": "read_chapter_summaries", "mode": "allow"},
     {"tool_name": "read_character", "mode": "allow"},
+    {"tool_name": "read_corpus_unit", "mode": "allow"},
     {"tool_name": "read_note", "mode": "allow"},
     {"tool_name": "read_range_summaries", "mode": "allow"},
     {"tool_name": "read_world_entry", "mode": "allow"},
     {"tool_name": "recycle_subagent", "mode": "allow"},
     {"tool_name": "reference_skill", "mode": "allow"},
     {"tool_name": "search_chapters", "mode": "allow"},
+    {"tool_name": "search_corpus", "mode": "allow"},
     {"tool_name": "update_index", "mode": "allow"},
     {"tool_name": "write_chapter", "mode": "ask"},
     {"tool_name": "write_note", "mode": "ask"},
@@ -94,6 +96,10 @@ async def test_get_settings_default(client: AsyncClient) -> None:
     assert data["index_auto_strategy"] == "off"
     assert data["index_rerank_enabled"] is False
     assert data["default_rerank_model"] == ""
+    assert data["corpus_embedding_model"] == ""
+    assert data["corpus_rerank_enabled"] is False
+    assert data["corpus_rerank_model"] == ""
+    assert data["corpus_index_concurrency"] == 1
     assert data["agent_bypass_tool_approval"] is False
     assert data["agent_tool_permissions"] == EXPECTED_AGENT_TOOL_PERMISSIONS
     assert data["audit_persist_details"] is False

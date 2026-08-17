@@ -51,7 +51,7 @@
 If you are self-hosting, Docker is the recommended way to run OpenFic.
 
 ```bash
-docker run -d -p 8000:8000 -v "openfic:/data" --name openfic ghcr.io/syrizelink/openfic:latest
+docker run -d -p 8000:8000 -v "openfic:/data" -v "/host/corpus:/imports:ro" --name openfic ghcr.io/syrizelink/openfic:latest
 ```
 
 ### 🐍 Python pip

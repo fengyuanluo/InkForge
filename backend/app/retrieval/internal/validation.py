@@ -34,6 +34,11 @@ def check_attribute_type(value: Any, field: FilterableField) -> None:
         return
     if field.field_type == FilterableFieldType.STRING and not isinstance(value, str):
         raise ValueError(f"Field {field.name} must be a string")
+    if field.field_type == FilterableFieldType.STRING_LIST and (
+        not isinstance(value, list)
+        or any(not isinstance(item, str) for item in value)
+    ):
+        raise ValueError(f"Field {field.name} must be a list of strings")
     if field.field_type == FilterableFieldType.INTEGER and (
         isinstance(value, bool) or not isinstance(value, int)
     ):
@@ -118,3 +123,17 @@ def validate_query_filter(
     if field is None:
         raise ValueError(f"Undeclared filterable field: {field_name}")
     check_attribute_type(value, field)
+
+
+def validate_query_string_list_filter(
+    contract: RetrievalIndexContract, field_name: str, values: list[str]
+) -> None:
+    field = next(
+        (item for item in contract.filterable_fields if item.name == field_name),
+        None,
+    )
+    if field is None:
+        raise ValueError(f"Undeclared filterable field: {field_name}")
+    if field.field_type != FilterableFieldType.STRING_LIST:
+        raise ValueError(f"Field {field_name} is not a string list")
+    check_attribute_type(values, field)

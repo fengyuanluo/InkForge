@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 import lancedb  # type: ignore[import-untyped]
-from lancedb.index import FTS, BTree, IvfHnswSq  # type: ignore[import-untyped]
+from lancedb.index import FTS, BTree, IvfHnswSq, LabelList  # type: ignore[import-untyped]
 
 from app.core.errors import ValidationError
 from app.retrieval.internal.common.codec import serialize_metadata
@@ -32,6 +32,7 @@ from app.retrieval.types import (
     IndexChunk,
     IndexDocument,
     RetrievalIndexContract,
+    FilterableFieldType,
 )
 
 
@@ -305,6 +306,7 @@ class LanceDBRetrievalEngine:
                 self.table_name,
                 schema=build_chunk_table_schema(self.contract),
                 mode="create",
+                exist_ok=True,
             )
 
     async def _open_table(self):
@@ -363,7 +365,11 @@ class LanceDBRetrievalEngine:
                 await table.create_index(
                     field.name,
                     replace=force_rebuild,
-                    config=BTree(),
+                    config=(
+                        LabelList()
+                        if field.field_type == FilterableFieldType.STRING_LIST
+                        else BTree()
+                    ),
                     name=scalar_name,
                 )
 

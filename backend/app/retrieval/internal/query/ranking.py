@@ -72,7 +72,9 @@ def rrf_merge(
     vector_rows: list[dict[str, Any]],
     bm25_rows: list[dict[str, Any]],
     k: int,
-    alpha: float = 0.7,
+    *,
+    vector_weight: float = 0.7,
+    bm25_weight: float = 0.3,
 ) -> dict[str, dict[str, Any]]:
     merged: dict[str, dict[str, Any]] = {}
     for rank, row in enumerate(vector_rows, start=1):
@@ -89,7 +91,7 @@ def rrf_merge(
                 "score": 0.0,
             },
         )
-        current["rrf_score"] += alpha / (k + rank)
+        current["rrf_score"] += vector_weight / (k + rank)
 
     for rank, row in enumerate(bm25_rows, start=1):
         chunk_id = str(row["chunk_id"])
@@ -108,5 +110,5 @@ def rrf_merge(
         if current["matched_by"] == "vector":
             current["matched_by"] = "hybrid"
         current["bm25_score"] = float(row.get("_score", 0.0))
-        current["rrf_score"] += (1.0 - alpha) / (k + rank)
+        current["rrf_score"] += bm25_weight / (k + rank)
     return merged

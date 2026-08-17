@@ -144,6 +144,11 @@ const DashboardPage = lazy(() =>
     default: module.DashboardPage,
   })),
 );
+const CorpusPage = lazy(() =>
+  import("./features/corpus").then((module) => ({
+    default: module.CorpusPage,
+  })),
+);
 
 function AppContent({
   appearance,
@@ -194,6 +199,14 @@ function AppContent({
             element={
               <Suspense fallback={null}>
                 <DashboardPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/corpus"
+            element={
+              <Suspense fallback={null}>
+                <CorpusPage />
               </Suspense>
             }
           />

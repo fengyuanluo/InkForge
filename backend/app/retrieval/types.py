@@ -17,6 +17,7 @@ JSONScalar = str | int | float | bool | None
 
 class FilterableFieldType(str, Enum):
     STRING = "string"
+    STRING_LIST = "string_list"
     INTEGER = "integer"
     FLOAT = "float"
     BOOLEAN = "boolean"
@@ -46,7 +47,7 @@ class IndexDocument(BaseModel):
     document_id: str
     text: str | None = None
     chunks: list[str] | None = None
-    attributes: dict[str, JSONScalar] | None = None
+    attributes: dict[str, JSONScalar | list[JSONScalar]] | None = None
     metadata: dict[str, JSONScalar | list[JSONScalar]] | None = None
 
 
@@ -57,7 +58,7 @@ class IndexChunk(BaseModel):
     chunk_index: int
     raw_text: str
     indexed_text: str
-    attributes: dict[str, JSONScalar] | None = None
+    attributes: dict[str, JSONScalar | list[JSONScalar]] | None = None
     metadata: dict[str, JSONScalar | list[JSONScalar]] | None = None
 
 
