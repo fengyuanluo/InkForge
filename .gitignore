@@ -21,7 +21,6 @@ tmp
 data
 frontend/lab.html
 frontend/src/local/
-AGENTS.md
 CLAUDE.md
 docs/superpowers
 *.db
