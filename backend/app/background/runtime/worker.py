@@ -15,7 +15,7 @@ from app.background.jobs.constants import (
 from app.background.jobs import repos as job_repo
 from app.background.jobs import service as job_service
 from app.background.jobs.states import JOB_STATUS_CANCEL_REQUESTED, JOB_STATUS_RUNNING
-from app.background.runtime.context import JobCancelledError, JobContext
+from app.background.runtime.context import JobCancelledError, JobContext, JobPausedError
 from app.background.runtime.dispatcher import dispatch_job
 from app.background.runtime.registry import get_job_registry
 from app.background.transport.base import BackgroundTransport
@@ -187,6 +187,12 @@ class BackgroundWorker:
             )
             await job_service.rollback_and_discard(context.session if context else session)
             await self._mark_cancelled_after_rollback(job_id, str(exc))
+        except JobPausedError:
+            logger.bind(job_id=job_id, worker_id=self.worker_id).info(
+                "background job paused at a safe checkpoint"
+            )
+            await job_service.rollback_and_discard(context.session if context else session)
+            await self._acknowledge_paused_after_rollback(job_id)
         except TimeoutError as exc:
             logger.bind(job_id=job_id, worker_id=self.worker_id).warning(
                 f"background job timed out: {exc}"
@@ -253,6 +259,17 @@ class BackgroundWorker:
             if job is not None:
                 await self._run_lifecycle_hook_safely(session, publisher, job, "cancelled", reason)
                 await job_service.mark_cancelled(session, publisher, job, reason=reason)
+                await job_service.commit_and_notify(session)
+        finally:
+            with suppress(Exception):
+                await session.close()
+
+    async def _acknowledge_paused_after_rollback(self, job_id: str) -> None:
+        session = await create_session()
+        try:
+            job = await job_repo.get_job(session, job_id)
+            if job is not None:
+                await job_service.acknowledge_paused_job(session, job)
                 await job_service.commit_and_notify(session)
         finally:
             with suppress(Exception):

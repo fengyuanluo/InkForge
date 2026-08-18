@@ -19,6 +19,8 @@ from app.background.events.types import (
     EVENT_JOB_SKIPPED,
     EVENT_JOB_SUCCEEDED,
     EVENT_JOB_TIMEOUT,
+    EVENT_JOB_PAUSED,
+    EVENT_JOB_RESUMED,
 )
 from app.background.jobs import repos as job_repo
 from app.background.jobs.models import BackgroundJob, BackgroundJobEvent, BackgroundJobItem
@@ -27,6 +29,8 @@ from app.background.jobs.states import (
     JOB_STATUS_CANCELLED,
     JOB_STATUS_FAILED,
     JOB_STATUS_PENDING,
+    JOB_STATUS_PAUSED,
+    JOB_STATUS_RUNNING,
     JOB_STATUS_SKIPPED,
     JOB_STATUS_SUCCEEDED,
     JOB_STATUS_TIMEOUT,
@@ -201,6 +205,13 @@ async def request_cancel(
     now = datetime.now(UTC)
     if job.status in TERMINAL_STATUSES:
         return job
+    if job.status == JOB_STATUS_PAUSED and not job.locked_by:
+        return await mark_cancelled(
+            session,
+            publisher,
+            job,
+            reason=reason or "任务已取消",
+        )
     if job.status == JOB_STATUS_PENDING:
         return await mark_cancelled(session, publisher, job, reason=reason or "任务已取消")
     job.status = JOB_STATUS_CANCEL_REQUESTED
@@ -224,10 +235,12 @@ async def cancel_job(
     *,
     reason: str | None = None,
 ) -> BackgroundJob:
-    """取消任务；等待中的任务同步运行取消清理钩子。"""
-    was_pending = job.status == JOB_STATUS_PENDING
+    """取消任务；未被 worker 持有的任务同步运行取消清理钩子。"""
+    was_synchronous = job.status == JOB_STATUS_PENDING or (
+        job.status == JOB_STATUS_PAUSED and not job.locked_by
+    )
     job = await request_cancel(session, publisher, job, reason=reason)
-    if not was_pending or job.status != JOB_STATUS_CANCELLED:
+    if not was_synchronous or job.status != JOB_STATUS_CANCELLED:
         return job
 
     definition = get_job_registry().get(job.type)
@@ -470,6 +483,89 @@ async def mark_skipped(
     _clear_lock(job)
     await job_repo.save_job(session, job)
     await append_event(session, publisher, job, event_type=EVENT_JOB_SKIPPED, payload=payload)
+    return job
+
+
+async def pause_job(
+    session: AsyncSession,
+    publisher: BackgroundEventPublisher,
+    job: BackgroundJob,
+) -> BackgroundJob:
+    if job.status == JOB_STATUS_PAUSED:
+        return job
+    if job.status not in {JOB_STATUS_PENDING, JOB_STATUS_RUNNING}:
+        raise ValueError(f"当前任务状态不支持暂停: {job.status}")
+    was_running = job.status == JOB_STATUS_RUNNING
+    job.status = JOB_STATUS_PAUSED
+    job.updated_at = datetime.now(UTC)
+    if not was_running:
+        _clear_lock(job)
+    await job_repo.save_job(session, job)
+    await append_event(session, publisher, job, event_type=EVENT_JOB_PAUSED)
+    return job
+
+
+async def acknowledge_paused_job(
+    session: AsyncSession,
+    job: BackgroundJob,
+) -> BackgroundJob:
+    if job.status != JOB_STATUS_PAUSED:
+        return job
+    _clear_lock(job)
+    return await job_repo.save_job(session, job)
+
+
+async def resume_job(
+    session: AsyncSession,
+    publisher: BackgroundEventPublisher,
+    job: BackgroundJob,
+) -> BackgroundJob:
+    if job.status != JOB_STATUS_PAUSED:
+        raise ValueError(f"当前任务状态不支持恢复: {job.status}")
+    now = datetime.now(UTC)
+    if job.locked_by and (job.lease_expires_at is None or job.lease_expires_at > now):
+        raise ValueError("任务正在完成当前批次，请稍后重试恢复")
+    job.status = JOB_STATUS_PENDING
+    job.next_run_at = now
+    job.finished_at = None
+    job.error_json = None
+    job.cancel_requested_at = None
+    job.cancel_reason = None
+    _clear_lock(job)
+    await job_repo.save_job(session, job)
+    await append_event(session, publisher, job, event_type=EVENT_JOB_RESUMED)
+    _queue_submitted_job_notification(session, job.id)
+    return job
+
+
+async def retry_job(
+    session: AsyncSession,
+    publisher: BackgroundEventPublisher,
+    job: BackgroundJob,
+) -> BackgroundJob:
+    if job.status not in {
+        JOB_STATUS_FAILED,
+        JOB_STATUS_TIMEOUT,
+        JOB_STATUS_CANCELLED,
+    }:
+        raise ValueError(f"当前任务状态不支持重试: {job.status}")
+    job.status = JOB_STATUS_PENDING
+    job.attempt_count = 0
+    job.next_run_at = datetime.now(UTC)
+    job.finished_at = None
+    job.error_json = None
+    job.cancel_requested_at = None
+    job.cancel_reason = None
+    _clear_lock(job)
+    await job_repo.save_job(session, job)
+    await append_event(
+        session,
+        publisher,
+        job,
+        event_type=EVENT_JOB_RETRY_SCHEDULED,
+        payload={"reason": "用户重试", "attempt_count": 0},
+    )
+    _queue_submitted_job_notification(session, job.id)
     return job
 
 

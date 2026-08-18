@@ -85,6 +85,8 @@ class OpenFicRetrievalService:
             existing.fts_index_params_json = kwargs["fts_index_params_json"]
             existing.schema_version = kwargs["schema_version"]
             existing.last_error = None
+            existing.last_build_at = None
+            existing.last_ready_at = None
             return await retrieval_index_repo.update(session, existing)
 
         if contract_from_row(existing) != contract:
@@ -153,12 +155,14 @@ class OpenFicRetrievalService:
         embedding_client: EmbeddingClientLike,
         *,
         replace_document_ids: set[str] | None = None,
+        mark_building: bool = True,
     ) -> ChunkIndexResult:
         row = await self._get_index(session, index_key)
         if row.status not in {"registered", "building", "ready", "failed"}:
             raise ValueError(f"Index {index_key} is not writable in status {row.status}")
-        await self._update_status(session, row, status="building", error=None)
-        await session.commit()
+        if mark_building:
+            await self._update_status(session, row, status="building", error=None)
+            await session.commit()
         return await self._engine_for(row).index_chunks(
             chunks,
             embedding_client,

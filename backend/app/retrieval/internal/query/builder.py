@@ -19,7 +19,10 @@ from app.retrieval.internal.query.ranking import (
     result_from_vector_row,
     rrf_merge,
 )
-from app.retrieval.internal.validation import validate_query_filter
+from app.retrieval.internal.validation import (
+    validate_query_filter,
+    validate_query_string_list_filter,
+)
 from app.retrieval.types import ChunkSearchResult
 
 if TYPE_CHECKING:
@@ -36,6 +39,8 @@ class RetrievalQueryBuilder:
     bm25_top_k_count: int = 20
     limit_count: int = 10
     rrf_k: int = 60
+    vector_rrf_weight: float = 0.7
+    bm25_rrf_weight: float = 0.3
     rerank_client: RerankClient | None = None
     rerank_top_n: int | None = None
     ef_search: int | None = None
@@ -70,6 +75,18 @@ class RetrievalQueryBuilder:
             raise ValueError("rrf k must be greater than 0")
         return replace(self, rrf_k=k)
 
+    def rrf_weights(
+        self, *, vector: float, bm25: float
+    ) -> "RetrievalQueryBuilder":
+        if vector < 0 or bm25 < 0 or vector + bm25 <= 0:
+            raise ValueError("RRF weights must be non-negative and not both zero")
+        total = vector + bm25
+        return replace(
+            self,
+            vector_rrf_weight=vector / total,
+            bm25_rrf_weight=bm25 / total,
+        )
+
     def rerank(
         self, rerank_client: RerankClient, *, top_n: int | None = None
     ) -> "RetrievalQueryBuilder":
@@ -94,6 +111,23 @@ class RetrievalQueryBuilder:
             validate_query_filter(self.engine.contract, field, value)
         escaped = ", ".join(render_value(value) for value in values)
         return replace(self, filters=self.filters + (f"{field} IN ({escaped})",))
+
+    def filter_array_any(
+        self, field: str, values: Sequence[str]
+    ) -> "RetrievalQueryBuilder":
+        values = tuple(dict.fromkeys(values))
+        if not values:
+            raise ValueError("filter_array_any requires at least one value")
+        validate_query_string_list_filter(
+            self.engine.contract,
+            field,
+            list(values),
+        )
+        rendered = ", ".join(render_value(value) for value in values)
+        return replace(
+            self,
+            filters=self.filters + (f"array_has_any({field}, [{rendered}])",),
+        )
 
     def filter_range(
         self, field: str, *, gte: Any | None = None, lte: Any | None = None
@@ -173,7 +207,13 @@ class RetrievalQueryBuilder:
         bm25_rows = await bm25_builder.to_list()
         logger.info("检索: LanceDB 查询完成 vector={} bm25={}", len(vector_rows), len(bm25_rows))
 
-        fused = rrf_merge(vector_rows, bm25_rows, self.rrf_k)
+        fused = rrf_merge(
+            vector_rows,
+            bm25_rows,
+            self.rrf_k,
+            vector_weight=self.vector_rrf_weight,
+            bm25_weight=self.bm25_rrf_weight,
+        )
         ordered = sorted(fused.values(), key=lambda item: item["rrf_score"], reverse=True)
 
         # 先将所有候选的 score 统一为归一化 RRF 置信度（0~1）。

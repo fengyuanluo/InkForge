@@ -59,6 +59,16 @@ class SettingsResponse(BaseModel):
         description="是否启用检索 rerank 二次排序",
     )
     default_rerank_model: str = Field(default="", description="默认 Rerank 模型 ID")
+    corpus_embedding_model: str = Field(
+        default="", description="语料库 Embedding 模型 ID"
+    )
+    corpus_rerank_enabled: bool = Field(
+        default=False, description="是否启用语料库检索 Rerank"
+    )
+    corpus_rerank_model: str = Field(default="", description="语料库 Rerank 模型 ID")
+    corpus_index_concurrency: int = Field(
+        default=1, ge=1, le=4, description="语料库索引并发数"
+    )
     agent_bypass_tool_approval: bool = Field(
         default=False,
         description="是否全局放行 Agent 工具审批",
@@ -107,6 +117,24 @@ class SettingsUpdateRequest(BaseModel):
         default=None,
         description="默认 Rerank 模型 ID",
     )
+    corpus_embedding_model: str | None = Field(
+        default=None,
+        description="语料库 Embedding 模型 ID",
+    )
+    corpus_rerank_enabled: bool | None = Field(
+        default=None,
+        description="是否启用语料库检索 Rerank",
+    )
+    corpus_rerank_model: str | None = Field(
+        default=None,
+        description="语料库 Rerank 模型 ID",
+    )
+    corpus_index_concurrency: int | None = Field(
+        default=None,
+        ge=1,
+        le=4,
+        description="语料库索引并发数",
+    )
     agent_bypass_tool_approval: bool | None = Field(
         default=None,
         description="是否全局放行 Agent 工具审批",
@@ -125,4 +153,3 @@ class SettingsUpdateRequest(BaseModel):
         default=None,
         description="是否启用 PostHog 错误遥测",
     )
-

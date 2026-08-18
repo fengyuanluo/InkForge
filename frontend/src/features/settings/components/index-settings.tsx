@@ -61,6 +61,10 @@ function patchSettings(current: Settings, patch: SettingsUpdateRequest): Setting
     indexAutoStrategy: patch.index_auto_strategy ?? current.indexAutoStrategy,
     indexRerankEnabled: patch.index_rerank_enabled ?? current.indexRerankEnabled,
     defaultRerankModel: patch.default_rerank_model ?? current.defaultRerankModel,
+    corpusEmbeddingModel: patch.corpus_embedding_model ?? current.corpusEmbeddingModel,
+    corpusRerankEnabled: patch.corpus_rerank_enabled ?? current.corpusRerankEnabled,
+    corpusRerankModel: patch.corpus_rerank_model ?? current.corpusRerankModel,
+    corpusIndexConcurrency: patch.corpus_index_concurrency ?? current.corpusIndexConcurrency,
     agentBypassToolApproval: patch.agent_bypass_tool_approval ?? current.agentBypassToolApproval,
     agentToolPermissions: patch.agent_tool_permissions
       ? patch.agent_tool_permissions.map((item) => ({

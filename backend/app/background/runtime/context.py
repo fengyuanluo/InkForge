@@ -12,7 +12,7 @@ from app.background.events.publisher import BackgroundEventPublisher
 from app.background.jobs.base import JobDefinition
 from app.background.jobs.models import BackgroundJob
 from app.background.jobs import service as job_service
-from app.background.jobs.states import JOB_STATUS_CANCEL_REQUESTED
+from app.background.jobs.states import JOB_STATUS_CANCEL_REQUESTED, JOB_STATUS_PAUSED
 from app.storage.database import create_session
 
 
@@ -21,6 +21,10 @@ T = TypeVar("T")
 
 class JobCancelledError(RuntimeError):
     """Raised when a job observes a cancellation request."""
+
+
+class JobPausedError(RuntimeError):
+    """Raised when a job reaches a safe pause checkpoint."""
 
 
 @dataclass
@@ -94,6 +98,18 @@ class JobContext:
                 raise RuntimeError(f"后台任务不存在: {self.job_id}")
             if job.status == JOB_STATUS_CANCEL_REQUESTED or job.cancel_requested_at:
                 raise JobCancelledError(job.cancel_reason or "后台任务已请求取消")
+        finally:
+            with suppress(Exception):
+                await session.close()
+
+    async def check_paused(self) -> None:
+        session = await create_session()
+        try:
+            job = await job_service.get_job(session, self.job_id)
+            if job is None:
+                raise RuntimeError(f"后台任务不存在: {self.job_id}")
+            if job.status == JOB_STATUS_PAUSED:
+                raise JobPausedError("后台任务已暂停")
         finally:
             with suppress(Exception):
                 await session.close()

@@ -39,6 +39,14 @@ const TOOL_DISPLAY_KEYS: Record<string, { name: string; description: string }> =
     name: "settings.agentTool.searchChapters.name",
     description: "settings.agentTool.searchChapters.description",
   },
+  search_corpus: {
+    name: "settings.agentTool.searchCorpus.name",
+    description: "settings.agentTool.searchCorpus.description",
+  },
+  read_corpus_unit: {
+    name: "settings.agentTool.readCorpusUnit.name",
+    description: "settings.agentTool.readCorpusUnit.description",
+  },
   update_index: {
     name: "settings.agentTool.updateIndex.name",
     description: "settings.agentTool.updateIndex.description",

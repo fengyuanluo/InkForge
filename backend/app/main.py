@@ -30,6 +30,7 @@ from app.api.routers import (
     audit,
     background,
     characters,
+    corpus,
     chapter_context,
     chapter_exports,
     chapters,
@@ -704,6 +705,7 @@ def create_app() -> FastAPI:
     app.include_router(chapters.router, prefix=app_settings.api_v1_prefix)
     app.include_router(notes.router, prefix=app_settings.api_v1_prefix)
     app.include_router(characters.router, prefix=app_settings.api_v1_prefix)
+    app.include_router(corpus.router, prefix=app_settings.api_v1_prefix)
     app.include_router(world_info.router, prefix=app_settings.api_v1_prefix)
     app.include_router(world_info_entries.router, prefix=app_settings.api_v1_prefix)
     app.include_router(settings.router, prefix=app_settings.api_v1_prefix)

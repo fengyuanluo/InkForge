@@ -42,6 +42,10 @@ export interface Settings {
   indexAutoStrategy: IndexAutoStrategy;
   indexRerankEnabled: boolean;
   defaultRerankModel: string;
+  corpusEmbeddingModel: string;
+  corpusRerankEnabled: boolean;
+  corpusRerankModel: string;
+  corpusIndexConcurrency: number;
   agentBypassToolApproval: boolean;
   agentToolPermissions: AgentToolPermission[];
   auditPersistDetails: boolean;
@@ -67,6 +71,10 @@ export interface SettingsResponse {
   index_auto_strategy: IndexAutoStrategy;
   index_rerank_enabled: boolean;
   default_rerank_model: string;
+  corpus_embedding_model: string;
+  corpus_rerank_enabled: boolean;
+  corpus_rerank_model: string;
+  corpus_index_concurrency: number;
   agent_bypass_tool_approval: boolean;
   agent_tool_permissions: Array<{
     tool_name: string;
@@ -95,6 +103,10 @@ export interface SettingsUpdateRequest {
   index_auto_strategy?: IndexAutoStrategy;
   index_rerank_enabled?: boolean;
   default_rerank_model?: string;
+  corpus_embedding_model?: string;
+  corpus_rerank_enabled?: boolean;
+  corpus_rerank_model?: string;
+  corpus_index_concurrency?: number;
   agent_bypass_tool_approval?: boolean;
   agent_tool_permissions?: Array<{
     tool_name: string;

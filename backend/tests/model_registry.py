@@ -26,6 +26,14 @@ def register_sqlmodel_models() -> None:
     from app.storage.models.chapter import Chapter
     from app.storage.models.chapter_summary import ChapterSummary
     from app.storage.models.commit import Commit
+    from app.storage.models.corpus import (
+        CorpusDocument,
+        CorpusDocumentIndexState,
+        CorpusLibrary,
+        CorpusLibraryDocument,
+        CorpusUnit,
+        ProjectCorpusLibrary,
+    )
     from app.storage.models.project import Project
     from app.storage.models.prompt_chain_version import PromptChainVersion
     from app.storage.models.prompt_entry import PromptEntry
@@ -62,11 +70,17 @@ def register_sqlmodel_models() -> None:
         Chapter,
         ChapterSummary,
         Commit,
+        CorpusDocument,
+        CorpusDocumentIndexState,
+        CorpusLibrary,
+        CorpusLibraryDocument,
+        CorpusUnit,
         Model,
         ModelProvider,
         Note,
         NoteCategory,
         Project,
+        ProjectCorpusLibrary,
         PromptChainVersion,
         PromptEntry,
         RetrievalIndex,

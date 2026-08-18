@@ -54,7 +54,7 @@
 如果使用容器方式安装进行自托管是推荐的安装方式。
 
 ```bash
-docker run -d -p 8000:8000 -v "openfic:/data" --name openfic ghcr.io/syrizelink/openfic:latest
+docker run -d -p 8000:8000 -v "openfic:/data" -v "/host/corpus:/imports:ro" --name openfic ghcr.io/syrizelink/openfic:latest
 ```
 
 

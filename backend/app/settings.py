@@ -93,6 +93,9 @@ class Settings(BaseSettings):
     character_images_dir: Path = BACKEND_DATA_DIR / "character-images"
     agent_attachments_dir: Path = BACKEND_DATA_DIR / "agent-attachments"
     chapter_exports_dir: Path = BACKEND_DATA_DIR / "chapter-exports"
+    corpus_dir: Path = BACKEND_DATA_DIR / "corpus"
+    corpus_import_root: Path = Path("/imports")
+    corpus_upload_max_bytes: int = 2 * 1024 * 1024 * 1024
     static_dir: Path = BACKEND_DATA_DIR
 
     # Background runtime

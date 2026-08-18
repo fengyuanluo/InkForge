@@ -11,6 +11,8 @@ from app.retrieval.types import FilterableFieldType, RetrievalIndexContract
 def field_type_to_arrow(field_type: FilterableFieldType):
     if field_type == FilterableFieldType.STRING:
         return pa.string()
+    if field_type == FilterableFieldType.STRING_LIST:
+        return pa.list_(pa.string())
     if field_type == FilterableFieldType.INTEGER:
         return pa.int64()
     if field_type == FilterableFieldType.FLOAT:

@@ -58,6 +58,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
                 "chapter_read",
                 "chapter_write",
                 "summary_read",
+                "corpus_read",
                 "world_read",
                 "world_write",
                 "note_read",
@@ -91,6 +92,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
                 "plan",
                 "chapter_read",
                 "summary_read",
+                "corpus_read",
                 "world_read",
                 "note_read",
                 "character_read",
@@ -118,6 +120,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
             enabled_tool_categories=(
                 "chapter_read",
                 "summary_read",
+                "corpus_read",
                 "world_read",
                 "note_read",
                 "character_read"
@@ -135,6 +138,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
             enabled_tool_categories=(
                 "chapter_read",
                 "summary_read",
+                "corpus_read",
                 "world_read",
                 "world_write",
                 "plan",
@@ -156,6 +160,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
             enabled_tool_categories=(
                 "chapter_read",
                 "summary_read",
+                "corpus_read",
                 "world_read",
                 "plan",
                 "note_read",
@@ -174,6 +179,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
             enabled_tool_categories=(
                 "chapter_read",
                 "summary_read",
+                "corpus_read",
                 "world_read",
                 "plan",
                 "chapter_write",
@@ -196,6 +202,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
                 "chapter_read",
                 "chapter_write",
                 "summary_read",
+                "corpus_read",
                 "world_read",
                 "world_write",
                 "note_read",
@@ -216,6 +223,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
             enabled_tool_categories=(
                 "chapter_read",
                 "summary_read",
+                "corpus_read",
                 "world_read",
                 "plan",
                 "character_read",

@@ -34,6 +34,16 @@ from app.audit.queue import (
     set_audit_details_persistence,
 )
 from app.audit.repo import LLMAuditLogRepo
+from app.corpus.config import (
+    DEFAULT_CORPUS_INDEX_CONCURRENCY,
+    DEFAULT_CORPUS_RERANK_ENABLED,
+    MAX_CORPUS_INDEX_CONCURRENCY,
+    SETTING_KEY_CORPUS_EMBEDDING_MODEL,
+    SETTING_KEY_CORPUS_INDEX_CONCURRENCY,
+    SETTING_KEY_CORPUS_RERANK_ENABLED,
+    SETTING_KEY_CORPUS_RERANK_MODEL,
+)
+from app.corpus.index import CORPUS_INDEX_KEY
 from app.retrieval.chapter_index import (
     DEFAULT_INDEX_AUTO_STRATEGY,
     DEFAULT_INDEX_CHUNK_OVERLAP,
@@ -54,6 +64,7 @@ from app.retrieval.chapter_index import (
 from app.retrieval.index_status import schedule_emit_index_config
 from app.storage.database import get_session
 from app.storage.repos import (
+    corpus_repo,
     retrieval_chapter_index_state_repo,
     retrieval_index_repo,
     setting_repo,
@@ -94,6 +105,12 @@ DEFAULT_SETTINGS = {
         DEFAULT_INDEX_RERANK_ENABLED, ensure_ascii=False
     ),
     SETTING_KEY_DEFAULT_RERANK_MODEL: DEFAULT_INDEX_RERANK_MODEL,
+    SETTING_KEY_CORPUS_EMBEDDING_MODEL: "",
+    SETTING_KEY_CORPUS_RERANK_ENABLED: json.dumps(
+        DEFAULT_CORPUS_RERANK_ENABLED, ensure_ascii=False
+    ),
+    SETTING_KEY_CORPUS_RERANK_MODEL: "",
+    SETTING_KEY_CORPUS_INDEX_CONCURRENCY: str(DEFAULT_CORPUS_INDEX_CONCURRENCY),
     SETTING_KEY_AGENT_BYPASS_TOOL_APPROVAL: "false",
     SETTING_KEY_AGENT_TOOL_PERMISSIONS: "[]",
     SETTING_KEY_AUDIT_PERSIST_DETAILS: "false",
@@ -315,6 +332,31 @@ code_font_family=settings_dict.get(
             SETTING_KEY_DEFAULT_RERANK_MODEL,
             DEFAULT_SETTINGS[SETTING_KEY_DEFAULT_RERANK_MODEL],
         ),
+        corpus_embedding_model=settings_dict.get(
+            SETTING_KEY_CORPUS_EMBEDDING_MODEL,
+            DEFAULT_SETTINGS[SETTING_KEY_CORPUS_EMBEDDING_MODEL],
+        ),
+        corpus_rerank_enabled=_parse_bool_setting(
+            settings_dict.get(
+                SETTING_KEY_CORPUS_RERANK_ENABLED,
+                DEFAULT_SETTINGS[SETTING_KEY_CORPUS_RERANK_ENABLED],
+            ),
+            default=DEFAULT_CORPUS_RERANK_ENABLED,
+        ),
+        corpus_rerank_model=settings_dict.get(
+            SETTING_KEY_CORPUS_RERANK_MODEL,
+            DEFAULT_SETTINGS[SETTING_KEY_CORPUS_RERANK_MODEL],
+        ),
+        corpus_index_concurrency=max(
+            1,
+            min(
+                _parse_int_setting(
+                    settings_dict.get(SETTING_KEY_CORPUS_INDEX_CONCURRENCY),
+                    default=DEFAULT_CORPUS_INDEX_CONCURRENCY,
+                ),
+                MAX_CORPUS_INDEX_CONCURRENCY,
+            ),
+        ),
         agent_bypass_tool_approval=_parse_bool_setting(
             settings_dict.get(
                 SETTING_KEY_AGENT_BYPASS_TOOL_APPROVAL,
@@ -386,6 +428,10 @@ async def update_settings(
             request.index_auto_strategy,
             request.index_rerank_enabled,
             request.default_rerank_model,
+            request.corpus_embedding_model,
+            request.corpus_rerank_enabled,
+            request.corpus_rerank_model,
+            request.corpus_index_concurrency,
         )
     )
     if is_restricted_update:
@@ -398,6 +444,7 @@ async def update_settings(
     settings_to_update: dict[str, str] = {}
     index_config_changed = False
     index_contract_changed = False
+    corpus_contract_changed = False
     next_audit_details_persistence: bool | None = None
 
     if request.language is not None:
@@ -485,6 +532,30 @@ async def update_settings(
             request.default_rerank_model
         )
         index_config_changed = True
+    if request.corpus_embedding_model is not None:
+        old_corpus_embedding_model = current_settings.get(
+            SETTING_KEY_CORPUS_EMBEDDING_MODEL,
+            DEFAULT_SETTINGS[SETTING_KEY_CORPUS_EMBEDDING_MODEL],
+        )
+        if old_corpus_embedding_model != request.corpus_embedding_model:
+            corpus_contract_changed = True
+        settings_to_update[SETTING_KEY_CORPUS_EMBEDDING_MODEL] = (
+            request.corpus_embedding_model
+        )
+    if request.corpus_rerank_enabled is not None:
+        settings_to_update[SETTING_KEY_CORPUS_RERANK_ENABLED] = json.dumps(
+            request.corpus_rerank_enabled,
+            ensure_ascii=False,
+        )
+    if request.corpus_rerank_model is not None:
+        settings_to_update[SETTING_KEY_CORPUS_RERANK_MODEL] = request.corpus_rerank_model
+    if request.corpus_index_concurrency is not None:
+        settings_to_update[SETTING_KEY_CORPUS_INDEX_CONCURRENCY] = str(
+            max(
+                1,
+                min(request.corpus_index_concurrency, MAX_CORPUS_INDEX_CONCURRENCY),
+            )
+        )
     if request.agent_bypass_tool_approval is not None:
         settings_to_update[SETTING_KEY_AGENT_BYPASS_TOOL_APPROVAL] = json.dumps(
             request.agent_bypass_tool_approval,
@@ -516,6 +587,16 @@ async def update_settings(
     if index_contract_changed:
         await retrieval_chapter_index_state_repo.mark_all_needs_rebuild(session)
         await retrieval_index_repo.mark_all_needs_rebuild(session)
+
+    if corpus_contract_changed:
+        await corpus_repo.mark_all_index_states_needs_rebuild(session)
+        corpus_index = await retrieval_index_repo.get_by_index_key(
+            session, CORPUS_INDEX_KEY
+        )
+        if corpus_index is not None:
+            corpus_index.status = "needs_rebuild"
+            corpus_index.last_error = None
+            await retrieval_index_repo.update(session, corpus_index)
 
     # 批量更新
     if settings_to_update:
