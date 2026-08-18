@@ -7,7 +7,7 @@ from pathlib import Path
 
 from cryptography.fernet import Fernet
 from loguru import logger
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -83,6 +83,9 @@ class Settings(BaseSettings):
 
     # API
     api_v1_prefix: str = "/api/v1"
+
+    # Optional single-password access control
+    password: str | None = Field(default=None, validation_alias="INKFORGE_PASSWORD")
 
     # Server
     host: str = "0.0.0.0"

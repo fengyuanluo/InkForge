@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import { Spinner } from "@/components";
 import type { CharacterListItem } from "@/lib/character.types";
+import { useAuthenticatedUrl } from "@/lib/use-authenticated-url";
 
 interface CharacterProfileDialogProps {
   character: CharacterListItem | null;
@@ -116,7 +117,8 @@ function CharacterProfileDialogContent({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   const imageObjectUrl = useMemo(() => (image ? URL.createObjectURL(image) : undefined), [image]);
-  const imagePreviewUrl = imageObjectUrl ?? character.imageUrl ?? undefined;
+  const authenticatedImageUrl = useAuthenticatedUrl(character.imageUrl);
+  const imagePreviewUrl = imageObjectUrl ?? authenticatedImageUrl;
 
   useEffect(() => {
     if (!imageObjectUrl) return;

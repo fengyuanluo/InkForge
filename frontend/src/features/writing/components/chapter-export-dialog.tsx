@@ -19,6 +19,7 @@ import "./chapter-export-dialog.css";
 
 import {
   cancelChapterExport,
+  authenticatedFetch,
   createChapterExport,
   fetchChapter,
   fetchChapterExport,
@@ -76,15 +77,19 @@ function toCheckboxValue(state: ChapterExportCheckState): boolean | "indetermina
   return state === "checked";
 }
 
-function triggerExportDownload(exportJob: ChapterExport): void {
+async function triggerExportDownload(exportJob: ChapterExport): Promise<void> {
   if (!exportJob.downloadUrl) return;
+  const response = await authenticatedFetch(exportJob.downloadUrl);
+  if (!response.ok) return;
+  const objectUrl = URL.createObjectURL(await response.blob());
   const anchor = document.createElement("a");
-  anchor.href = exportJob.downloadUrl;
+  anchor.href = objectUrl;
   anchor.download = exportJob.filename;
   anchor.style.display = "none";
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
+  URL.revokeObjectURL(objectUrl);
 }
 
 export function ChapterExportDialog({
@@ -258,7 +263,7 @@ export function ChapterExportDialog({
       setIsCancelling(false);
       if (downloadedExportIdRef.current !== exportJob.id) {
         downloadedExportIdRef.current = exportJob.id;
-        triggerExportDownload(exportJob);
+        void triggerExportDownload(exportJob);
       }
       return;
     }
@@ -707,7 +712,7 @@ export function ChapterExportDialog({
                 >
                   {t("common.close")}
                 </Button>
-                <Button onClick={() => triggerExportDownload(exportJob)}>
+                <Button onClick={() => void triggerExportDownload(exportJob)}>
                   <Download size={16} />
                   {t(`${EXPORT_I18N_KEY}.downloadAgain`)}
                 </Button>

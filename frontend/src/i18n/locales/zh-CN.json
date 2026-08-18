@@ -75,6 +75,12 @@
     "chinese": "简体中文",
     "english": "English"
   },
+  "auth": {
+    "password": "访问密码",
+    "login": "登录",
+    "logout": "退出登录",
+    "invalidPassword": "密码错误"
+  },
   "corpus": {
     "title": "语料库",
     "libraries": "语料库",

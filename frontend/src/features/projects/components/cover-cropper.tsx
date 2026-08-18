@@ -7,9 +7,11 @@
 
 import { Box, Button, Dialog, Flex, Text } from "@radix-ui/themes";
 import { Upload } from "lucide-react";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import Cropper, { type Area } from "react-easy-crop";
 import { useTranslation } from "react-i18next";
+
+import { useAuthenticatedUrl } from "@/lib/use-authenticated-url";
 
 interface CoverCropperProps {
   /** 当前裁剪后的文件 */
@@ -76,6 +78,13 @@ export function CoverCropper({ value, onChange, previewUrl }: CoverCropperProps)
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const authenticatedPreviewUrl = useAuthenticatedUrl(previewUrl);
+  const localPreviewUrl = useMemo(() => (value ? URL.createObjectURL(value) : null), [value]);
+
+  useEffect(() => {
+    if (!localPreviewUrl) return;
+    return () => URL.revokeObjectURL(localPreviewUrl);
+  }, [localPreviewUrl]);
 
   /** 处理文件选择 */
   const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +128,7 @@ export function CoverCropper({ value, onChange, previewUrl }: CoverCropperProps)
   }, []);
 
   // 显示模式（已有封面或预览）
-  const displayUrl = value ? URL.createObjectURL(value) : previewUrl;
+  const displayUrl = localPreviewUrl ?? authenticatedPreviewUrl;
 
   return (
     <Box>

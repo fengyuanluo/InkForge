@@ -9,6 +9,7 @@ import { BookOpen, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
+import { AuthenticatedImage } from "@/components/authenticated-image";
 import type { Project } from "@/lib/project.types";
 
 import "./project-grid-selector.css";
@@ -108,7 +109,7 @@ export function ProjectGridSelector({
               onSelect={() => handleSelect(project.id)}
             >
               {project.coverUrl ? (
-                <img
+                <AuthenticatedImage
                   src={project.coverUrl}
                   alt={project.title}
                   className="project-grid-selector__cover-img"

@@ -7,6 +7,7 @@ from loguru import logger
 from app.agent_runtime.streaming.replay_buffer import get_agent_event_replay_buffer
 from app.api.routers.chapter_context import build_summary_realtime_snapshot
 from app.core.errors import NotFoundError
+from app.password_auth import verify_access_token
 from app.storage.database import create_session
 from app.storage.services import task_service
 
@@ -75,9 +76,14 @@ def register_handlers(sio: socketio.AsyncServer) -> None:
     """注册所有客户端→服务端事件处理器。"""
 
     @sio.event
-    async def connect(sid: str, environ: dict, auth: dict | None = None) -> None:
+    async def connect(sid: str, environ: dict, auth: dict | None = None) -> bool | None:
+        token = auth.get("token") if isinstance(auth, dict) else None
+        if not verify_access_token(token if isinstance(token, str) else None):
+            logger.warning(f"Rejected unauthenticated Socket.IO client: {sid}")
+            return False
         logger.info(f"Client connected: {sid}")
         _state.on_connect(sid)
+        return None
 
     @sio.event
     async def disconnect(sid: str) -> None:

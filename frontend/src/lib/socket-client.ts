@@ -1,6 +1,7 @@
 import { io, type Socket } from "socket.io-client";
 
 import i18n from "../i18n";
+import { getAccessToken } from "./api-client";
 import { publishSocketDiagnostic, type SocketDiagnosticPayload } from "./desktop-appearance-bridge";
 import { getConfiguredBackendBaseUrl, getRuntimeConfig } from "./runtime-config";
 
@@ -94,7 +95,12 @@ function describeSocketHttpStatus(status: number): string {
 async function probeSocketIoEndpoint(baseUrl: string): Promise<string | null> {
   const url = `${baseUrl.replace(/\/+$/, "")}/socket.io/?EIO=4&transport=polling`;
   try {
-    const response = await fetch(url, { method: "GET", cache: "no-store" });
+    const token = getAccessToken();
+    const response = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    });
     if (response.ok) return i18n.t("common.socketProbeOk");
     return describeSocketHttpStatus(response.status);
   } catch {
@@ -175,12 +181,14 @@ export function getSocket(): Socket {
       ? io(nextSocketUrl, {
           path: "/socket.io",
           autoConnect: false,
+          auth: { token: getAccessToken() },
           transports: ["websocket", "polling"],
           tryAllTransports: true,
         })
       : io({
           path: "/socket.io",
           autoConnect: false,
+          auth: { token: getAccessToken() },
           transports: ["websocket", "polling"],
           tryAllTransports: true,
         });

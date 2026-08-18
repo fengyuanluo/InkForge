@@ -6,7 +6,8 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 
 import "react-photo-view/dist/react-photo-view.css";
 
-import type { AgentMessage } from "@/lib/agent.types";
+import type { AgentImageAttachment, AgentMessage } from "@/lib/agent.types";
+import { useAuthenticatedUrl } from "@/lib/use-authenticated-url";
 
 import { InlineMentionText } from "../../../inline-mention-text";
 import { MessageCardShell, UserMessageShell } from "../../shared/message-shell";
@@ -32,8 +33,29 @@ interface UserMessageMeasurements {
   previewHeight: number;
 }
 
-export function UserRequestMessage({ message, onOpenMentionChapter }: UserRequestMessageProps) {
+function UserAttachmentImage({ attachment }: { attachment: AgentImageAttachment }) {
   const { t } = useTranslation();
+  const sourceUrl = useAuthenticatedUrl(attachment.url);
+  if (!sourceUrl) return null;
+
+  return (
+    <PhotoView src={sourceUrl}>
+      <button
+        type="button"
+        className="agent-image-preview-trigger"
+        aria-label={t("writing.aiSidebar.viewImage", { fileName: attachment.fileName })}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <img
+          src={sourceUrl}
+          alt={attachment.fileName || t("writing.aiSidebar.userUploadedImage")}
+        />
+      </button>
+    </PhotoView>
+  );
+}
+
+export function UserRequestMessage({ message, onOpenMentionChapter }: UserRequestMessageProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPointerInside, setIsPointerInside] = useState(false);
   const [suppressCollapsedOverlay, setSuppressCollapsedOverlay] = useState(false);
@@ -125,24 +147,10 @@ export function UserRequestMessage({ message, onOpenMentionChapter }: UserReques
           <PhotoProvider>
             <div className="agent-user-message-images">
               {message.attachments.map((attachment) => (
-                <PhotoView
+                <UserAttachmentImage
                   key={attachment.id}
-                  src={attachment.url}
-                >
-                  <button
-                    type="button"
-                    className="agent-image-preview-trigger"
-                    aria-label={t("writing.aiSidebar.viewImage", {
-                      fileName: attachment.fileName,
-                    })}
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <img
-                      src={attachment.url}
-                      alt={attachment.fileName || t("writing.aiSidebar.userUploadedImage")}
-                    />
-                  </button>
-                </PhotoView>
+                  attachment={attachment}
+                />
               ))}
             </div>
           </PhotoProvider>

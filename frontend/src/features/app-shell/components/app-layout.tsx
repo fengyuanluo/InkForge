@@ -27,6 +27,7 @@ interface AppLayoutProps {
   version: string;
   onAppearanceChange: (appearance: "light" | "dark") => void;
   onToggleTheme: () => void;
+  authEnabled: boolean;
 }
 
 export function AppLayout({
@@ -34,6 +35,7 @@ export function AppLayout({
   version,
   onAppearanceChange,
   onToggleTheme,
+  authEnabled,
 }: AppLayoutProps) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -162,6 +164,7 @@ export function AppLayout({
           <AppSidebar
             appearance={appearance}
             onToggleTheme={onToggleTheme}
+            authEnabled={authEnabled}
           />
 
           <div className="app-layout-content">
