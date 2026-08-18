@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/fengyuanluo/InkForge/compare/v0.11.0...v0.11.1) (2026-08-18)
+
+
+### 🐛 问题修复
+
+* **release:** rename public distribution to InkForge ([3c5328f](https://github.com/fengyuanluo/InkForge/commit/3c5328f77ea47ecebcdb14a3dbe513b676cbc20b))
+
 ## [0.11.0](https://github.com/fengyuanluo/InkForge/compare/v0.10.0...v0.11.0) (2026-08-18)
 
 
