@@ -51,6 +51,8 @@ export interface Settings {
   auditPersistDetails: boolean;
   compressSystemPrompts: boolean;
   telemetryEnabled: boolean;
+  editorAutoIndent: boolean;
+  editorAutoConvertPunctuation: boolean;
 }
 
 /** 设置响应（后端格式） */
@@ -83,6 +85,8 @@ export interface SettingsResponse {
   audit_persist_details: boolean;
   compress_system_prompts: boolean;
   telemetry_enabled: boolean;
+  editor_auto_indent?: boolean;
+  editor_auto_convert_punctuation?: boolean;
 }
 
 /** 设置更新请求 */
@@ -115,6 +119,8 @@ export interface SettingsUpdateRequest {
   audit_persist_details?: boolean;
   compress_system_prompts?: boolean;
   telemetry_enabled?: boolean;
+  editor_auto_indent?: boolean;
+  editor_auto_convert_punctuation?: boolean;
 }
 
 export interface AuditDetailsStorage {

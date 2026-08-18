@@ -85,6 +85,8 @@ SETTING_KEY_DEFAULT_MODEL = "default_model"
 SETTING_KEY_LIGHT_MODEL = "light_model"
 SETTING_KEY_DEFAULT_EMBEDDING_MODEL = "default_embedding_model"
 SETTING_KEY_AUDIT_PERSIST_DETAILS = AUDIT_DETAILS_PERSISTENCE_SETTING_KEY
+SETTING_KEY_EDITOR_AUTO_INDENT = "editor_auto_indent"
+SETTING_KEY_EDITOR_AUTO_CONVERT_PUNCTUATION = "editor_auto_convert_punctuation"
 # 默认值
 DEFAULT_SETTINGS = {
     SETTING_KEY_LANGUAGE: "zh-CN",
@@ -116,6 +118,8 @@ DEFAULT_SETTINGS = {
     SETTING_KEY_AUDIT_PERSIST_DETAILS: "false",
     SETTING_KEY_COMPRESS_SYSTEM_PROMPTS: "false",
     SETTING_KEY_TELEMETRY_ENABLED: "true",
+    SETTING_KEY_EDITOR_AUTO_INDENT: "true",
+    SETTING_KEY_EDITOR_AUTO_CONVERT_PUNCTUATION: "false",
 }
 
 
@@ -386,6 +390,20 @@ code_font_family=settings_dict.get(
             ),
             default=True,
         ),
+        editor_auto_indent=_parse_bool_setting(
+            settings_dict.get(
+                SETTING_KEY_EDITOR_AUTO_INDENT,
+                DEFAULT_SETTINGS[SETTING_KEY_EDITOR_AUTO_INDENT],
+            ),
+            default=True,
+        ),
+        editor_auto_convert_punctuation=_parse_bool_setting(
+            settings_dict.get(
+                SETTING_KEY_EDITOR_AUTO_CONVERT_PUNCTUATION,
+                DEFAULT_SETTINGS[SETTING_KEY_EDITOR_AUTO_CONVERT_PUNCTUATION],
+            ),
+            default=False,
+        ),
     )
 
 
@@ -580,6 +598,16 @@ async def update_settings(
     if request.telemetry_enabled is not None:
         settings_to_update[SETTING_KEY_TELEMETRY_ENABLED] = json.dumps(
             request.telemetry_enabled,
+            ensure_ascii=False,
+        )
+    if request.editor_auto_indent is not None:
+        settings_to_update[SETTING_KEY_EDITOR_AUTO_INDENT] = json.dumps(
+            request.editor_auto_indent,
+            ensure_ascii=False,
+        )
+    if request.editor_auto_convert_punctuation is not None:
+        settings_to_update[SETTING_KEY_EDITOR_AUTO_CONVERT_PUNCTUATION] = json.dumps(
+            request.editor_auto_convert_punctuation,
             ensure_ascii=False,
         )
 

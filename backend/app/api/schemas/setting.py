@@ -85,6 +85,14 @@ class SettingsResponse(BaseModel):
         default=True,
         description="是否启用 PostHog 错误遥测",
     )
+    editor_auto_indent: bool = Field(
+        default=True,
+        description="换行时若当前段落以两个全角空格开头，是否为下一段自动添加相同前缀",
+    )
+    editor_auto_convert_punctuation: bool = Field(
+        default=False,
+        description="输入半角标点符号时是否自动转换为全角",
+    )
 
 
 class SettingsUpdateRequest(BaseModel):
@@ -152,4 +160,12 @@ class SettingsUpdateRequest(BaseModel):
     telemetry_enabled: bool | None = Field(
         default=None,
         description="是否启用 PostHog 错误遥测",
+    )
+    editor_auto_indent: bool | None = Field(
+        default=None,
+        description="换行时若当前段落以两个全角空格开头，是否为下一段自动添加相同前缀",
+    )
+    editor_auto_convert_punctuation: bool | None = Field(
+        default=None,
+        description="输入半角标点符号时是否自动转换为全角",
     )
