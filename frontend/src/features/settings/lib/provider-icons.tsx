@@ -7,6 +7,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Spinner } from "@/components";
+import { authenticatedFetch } from "@/lib/api-client";
 
 import { scheduleProviderIconRequest } from "./provider-icon-request-queue";
 import { getProviderIconUrl } from "./provider-icon-url";
@@ -70,7 +71,7 @@ export function ProviderIcon({ iconPath, size = 20 }: ProviderIconProps) {
 
     const cancelRequest = scheduleProviderIconRequest(async () => {
       try {
-        const response = await fetch(iconUrl, { signal: abortController.signal });
+        const response = await authenticatedFetch(iconUrl, { signal: abortController.signal });
         if (!response.ok) throw new Error(`Failed to load provider icon: ${response.status}`);
 
         const document = new DOMParser().parseFromString(await response.text(), "image/svg+xml");

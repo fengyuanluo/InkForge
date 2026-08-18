@@ -42,9 +42,10 @@ const MotionFlex = motion.create(Flex);
 interface AppSidebarProps {
   appearance: "light" | "dark";
   onToggleTheme: () => void;
+  authEnabled: boolean;
 }
 
-export function AppSidebar({ appearance, onToggleTheme }: AppSidebarProps) {
+export function AppSidebar({ appearance, onToggleTheme, authEnabled }: AppSidebarProps) {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
@@ -387,6 +388,7 @@ export function AppSidebar({ appearance, onToggleTheme }: AppSidebarProps) {
                   shouldAnimateTheme={shouldAnimateTheme}
                   languageLabel={t("topbar.language")}
                   settingsLabel={t("topbar.settings")}
+                  logoutLabel={t("auth.logout")}
                   toggleThemeLabel={t("topbar.toggleTheme")}
                   themeTooltip={
                     appearance === "light"
@@ -401,6 +403,7 @@ export function AppSidebar({ appearance, onToggleTheme }: AppSidebarProps) {
                   onLanguageChange={handleLanguageChange}
                   onToggleTheme={handleThemeToggle}
                   onOpenSettings={handleOpenSettings}
+                  authEnabled={authEnabled}
                 />
               </MotionFlex>
             </Flex>

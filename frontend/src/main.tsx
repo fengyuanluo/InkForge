@@ -8,6 +8,7 @@ import App from "./App.tsx";
 import { AppCrashFallback, GlobalLoading } from "./components";
 import { Toaster } from "./components/toaster";
 import { AppLayout } from "./features/app-shell";
+import { PasswordLogin } from "./features/auth";
 import { CharactersPage } from "./features/characters";
 import { PromptChainsPage } from "./features/prompt-chains";
 import { fetchSettings } from "./features/settings/lib/settings-api";
@@ -16,7 +17,7 @@ import { WorldInfoPage } from "./features/world-info";
 import { WritingPage } from "./features/writing";
 // 初始化 i18n
 import i18n, { type LanguageCode } from "./i18n";
-import { checkHealth } from "./lib/api-client";
+import { checkAuthStatus, checkHealth } from "./lib/api-client";
 import { publishDesktopAppearance, publishDesktopLanguage } from "./lib/desktop-appearance-bridge";
 import { applyCodeFontFamily, applyFontFamily, loadConfiguredFonts } from "./lib/font-utils";
 import { getOrCreateRoot } from "./lib/get-or-create-root";
@@ -155,11 +156,13 @@ function AppContent({
   version,
   setAppearance,
   toggleTheme,
+  authEnabled,
 }: {
   appearance: "light" | "dark";
   version: string;
   setAppearance: (appearance: "light" | "dark") => void;
   toggleTheme: () => void;
+  authEnabled: boolean;
 }) {
   return (
     <BrowserRouter>
@@ -171,6 +174,7 @@ function AppContent({
               version={version}
               onAppearanceChange={setAppearance}
               onToggleTheme={toggleTheme}
+              authEnabled={authEnabled}
             />
           }
         >
@@ -220,6 +224,8 @@ function Root() {
   const [appearance, setAppearance] = useState<"light" | "dark">("light");
   const [settings, setSettings] = useState<Settings | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [authRequired, setAuthRequired] = useState(false);
+  const [authEnabled, setAuthEnabled] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const toggleTheme = () => {
@@ -234,6 +240,16 @@ function Root() {
     const initializeApp = async () => {
       try {
         await loadRuntimeConfig();
+        const authStatus = await checkAuthStatus();
+        if (!authStatus.authenticated) {
+          if (mounted) {
+            setAuthEnabled(authStatus.enabled);
+            setAuthRequired(true);
+            setError(null);
+          }
+          return;
+        }
+        if (mounted) setAuthEnabled(authStatus.enabled);
         void initErrorTelemetry();
 
         const [, settings] = await Promise.all([
@@ -316,10 +332,14 @@ function Root() {
             scaling="100%"
           >
             {!isReady ? (
-              <GlobalLoading
-                error={error}
-                onRetry={() => window.location.reload()}
-              />
+              authRequired ? (
+                <PasswordLogin />
+              ) : (
+                <GlobalLoading
+                  error={error}
+                  onRetry={() => window.location.reload()}
+                />
+              )
             ) : (
               <ErrorBoundary
                 FallbackComponent={AppCrashFallback}
@@ -330,6 +350,7 @@ function Root() {
                   version={FRONTEND_VERSION}
                   setAppearance={setAppearance}
                   toggleTheme={toggleTheme}
+                  authEnabled={authEnabled}
                 />
               </ErrorBoundary>
             )}

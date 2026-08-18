@@ -1,8 +1,15 @@
 importScripts("/sw-precache.js");
 
-const CACHE_NAME = "openfic-shell-v1";
+const CACHE_NAME = "openfic-shell-v2";
 
-const BACKEND_PATHS = ["/api/", "/socket.io/", "/covers/", "/icons/"];
+const BACKEND_PATHS = [
+  "/api/",
+  "/socket.io/",
+  "/covers/",
+  "/character-images/",
+  "/agent-attachments/",
+  "/icons/",
+];
 
 self.addEventListener("install", (event) => {
   const precacheList = self.__PRECACHE_LIST || [];

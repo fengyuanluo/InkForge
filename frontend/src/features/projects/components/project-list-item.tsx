@@ -10,6 +10,7 @@ import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
+import { AuthenticatedImage } from "@/components/authenticated-image";
 import type { Project } from "@/lib/project.types";
 import { formatRelativeTime } from "@/lib/time-utils";
 
@@ -55,7 +56,7 @@ export function ProjectListItem({ project, onEdit, onDelete }: ProjectListItemPr
           }}
         >
           {project.coverUrl ? (
-            <img
+            <AuthenticatedImage
               src={project.coverUrl}
               alt={project.title}
               style={{

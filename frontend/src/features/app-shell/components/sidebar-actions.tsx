@@ -1,6 +1,8 @@
 import { IconButton, Tooltip, DropdownMenu } from "@radix-ui/themes";
-import { Languages, Moon, Settings, Sun } from "lucide-react";
+import { Languages, LogOut, Moon, Settings, Sun } from "lucide-react";
 import { motion } from "motion/react";
+
+import { logoutPasswordAuth } from "@/lib/api-client";
 
 import {
   SIDEBAR_ICON_COLOR,
@@ -14,6 +16,7 @@ interface SidebarActionsProps {
   shouldAnimateTheme: boolean;
   languageLabel: string;
   settingsLabel: string;
+  logoutLabel: string;
   toggleThemeLabel: string;
   themeTooltip: string;
   languages: Array<{ code: string; name: string }>;
@@ -21,6 +24,7 @@ interface SidebarActionsProps {
   onLanguageChange: (language: string) => void;
   onToggleTheme: () => void;
   onOpenSettings: () => void;
+  authEnabled: boolean;
 }
 
 export function SidebarActions({
@@ -29,6 +33,7 @@ export function SidebarActions({
   shouldAnimateTheme,
   languageLabel,
   settingsLabel,
+  logoutLabel,
   toggleThemeLabel,
   themeTooltip,
   languages,
@@ -36,6 +41,7 @@ export function SidebarActions({
   onLanguageChange,
   onToggleTheme,
   onOpenSettings,
+  authEnabled,
 }: SidebarActionsProps) {
   const tooltipSide = isExpanded ? "top" : "right";
 
@@ -77,6 +83,31 @@ export function SidebarActions({
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       </motion.div>
+
+      {authEnabled ? (
+        <motion.div
+          layout
+          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Tooltip
+            content={logoutLabel}
+            side={tooltipSide}
+          >
+            <IconButton
+              variant="ghost"
+              size="2"
+              onClick={logoutPasswordAuth}
+              aria-label={logoutLabel}
+              style={sidebarActionButtonStyle}
+            >
+              <LogOut
+                size={SIDEBAR_ICON_SIZE}
+                color="currentColor"
+              />
+            </IconButton>
+          </Tooltip>
+        </motion.div>
+      ) : null}
 
       <motion.div
         layout

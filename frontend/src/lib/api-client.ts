@@ -8,6 +8,32 @@ import axios from "axios";
 
 import { getConfiguredBackendBaseUrl, getRuntimeConfig } from "./runtime-config";
 
+const AUTH_TOKEN_STORAGE_KEY = "inkforge.password-auth-token";
+
+export interface AuthStatus {
+  enabled: boolean;
+  authenticated: boolean;
+}
+
+interface LoginResponse {
+  access_token: string;
+  token_type: "bearer";
+}
+
+export function getAccessToken(): string | null {
+  return window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+}
+
+export function clearAccessToken(): void {
+  window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+}
+
+function handleAuthenticationRequired(): void {
+  if (!getAccessToken()) return;
+  clearAccessToken();
+  window.location.reload();
+}
+
 export function getApiBaseUrl(): string {
   const backendBaseUrl = getRuntimeConfig()?.backendBaseUrl ?? getConfiguredBackendBaseUrl();
   if (backendBaseUrl) return `${backendBaseUrl}/api/v1`;
@@ -41,6 +67,8 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use((config) => {
   config.baseURL = getApiBaseUrl();
+  const token = getAccessToken();
+  if (token) config.headers.set("Authorization", `Bearer ${token}`);
   return config;
 });
 
@@ -48,6 +76,10 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    const requestUrl = String(error.config?.url ?? "");
+    if (error.response?.status === 401 && !requestUrl.endsWith("/auth/login")) {
+      handleAuthenticationRequired();
+    }
     // 开发环境记录错误日志
     if (import.meta.env.DEV) {
       console.error("API Error:", error);
@@ -55,6 +87,46 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export async function checkAuthStatus(): Promise<AuthStatus> {
+  const response = await apiClient.get<AuthStatus>("/auth/status");
+  if (response.data.enabled && !response.data.authenticated) clearAccessToken();
+  return response.data;
+}
+
+export async function loginWithPassword(password: string): Promise<void> {
+  const response = await apiClient.post<LoginResponse>("/auth/login", { password });
+  window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, response.data.access_token);
+}
+
+export function logoutPasswordAuth(): void {
+  clearAccessToken();
+  window.location.reload();
+}
+
+export async function authenticatedFetch(
+  input: RequestInfo | URL,
+  init: RequestInit = {},
+): Promise<Response> {
+  const headers = new Headers(init.headers);
+  const token = getAccessToken();
+  if (token && isBackendRequest(input)) headers.set("Authorization", `Bearer ${token}`);
+  const response = await fetch(input, { ...init, headers });
+  if (response.status === 401) handleAuthenticationRequired();
+  return response;
+}
+
+function isBackendRequest(input: RequestInfo | URL): boolean {
+  const configuredBackend = getRuntimeConfig()?.backendBaseUrl ?? getConfiguredBackendBaseUrl();
+  const baseUrl = configuredBackend ?? window.location.href;
+  const requestUrl = input instanceof Request ? input.url : input.toString();
+  try {
+    const backendOrigin = new URL(baseUrl).origin;
+    return new URL(requestUrl, baseUrl).origin === backendOrigin;
+  } catch {
+    return false;
+  }
+}
 
 // 健康检查类型
 export interface HealthResponse {
@@ -1709,7 +1781,7 @@ export async function importWorldInfoEntriesStream(
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch(
+  const response = await authenticatedFetch(
     getApiUrl(`/world-info/${worldInfoId}/entries/import-stream?mode=${mode}`),
     {
       method: "POST",

@@ -33,6 +33,7 @@ import { ContextMenu, type ContextMenuItem } from "@/components/context-menu";
 import type { CharacterListItem } from "@/lib/character.types";
 import type { Project } from "@/lib/project.types";
 import { formatRelativeTime } from "@/lib/time-utils";
+import { useAuthenticatedUrl } from "@/lib/use-authenticated-url";
 
 import { CharacterSearchPopover } from "./character-search-popover";
 
@@ -75,6 +76,7 @@ function CharacterListAvatar({
   character: CharacterListItem;
   onEditProfile: (character: CharacterListItem) => void;
 }) {
+  const authenticatedImageUrl = useAuthenticatedUrl(character.imageUrl);
   const [isLoaded, setIsLoaded] = useState(
     () => !character.imageUrl || loadedAvatarUrls.has(character.imageUrl),
   );
@@ -91,14 +93,14 @@ function CharacterListAvatar({
     >
       {character.imageUrl ? (
         <>
-          {!isLoaded && (
+          {(!isLoaded || !authenticatedImageUrl) && (
             <Spinner
               size={18}
               className="characters-list-avatar-spinner"
             />
           )}
           <img
-            src={character.imageUrl}
+            src={authenticatedImageUrl}
             alt=""
             className="characters-list-avatar-image"
             data-loaded={isLoaded ? "true" : "false"}

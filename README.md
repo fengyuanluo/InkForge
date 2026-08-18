@@ -57,6 +57,14 @@
 docker run -d -p 8000:8000 -v "inkforge:/data" -v "/host/corpus:/imports:ro" --name inkforge ghcr.io/fengyuanluo/inkforge:latest
 ```
 
+如需启用单密码访问认证，增加 `INKFORGE_PASSWORD` 环境变量：
+
+```bash
+docker run -d -p 8000:8000 -e INKFORGE_PASSWORD="你的密码" -v "inkforge:/data" -v "/host/corpus:/imports:ro" --name inkforge ghcr.io/fengyuanluo/inkforge:latest
+```
+
+未设置该变量时认证关闭。密码变更后，已有登录状态自动失效；通过公网访问时应在 InkForge 前配置 HTTPS。
+
 
 ### 🐍 Python pip
 
@@ -75,6 +83,12 @@ pip install openfic
 
 ```bash
 openfic serve
+```
+
+启用密码认证：
+
+```bash
+INKFORGE_PASSWORD="你的密码" openfic serve
 ```
 
 

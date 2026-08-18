@@ -21,7 +21,7 @@ from starlette.responses import Response
 from starlette.types import Scope
 
 from app.api.exceptions import register_exception_handlers
-from app.api.middleware import AccessLogMiddleware
+from app.api.middleware import AccessLogMiddleware, PasswordAuthMiddleware
 from app.api.routers import (
     agent_definitions,
     agent_memories,
@@ -44,6 +44,7 @@ from app.api.routers import (
     notes,
     projects,
     prompt_chains,
+    password_auth,
     retrieval_index,
     runtime_config,
     settings,
@@ -687,7 +688,9 @@ def create_app() -> FastAPI:
 
     install_telemetry_sink()
 
-    # CORS middleware
+    app.add_middleware(PasswordAuthMiddleware)
+    app.add_middleware(AccessLogMiddleware)
+    # Keep CORS outermost so authentication errors are readable cross-origin.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -695,10 +698,10 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    app.add_middleware(AccessLogMiddleware)
 
     # Mount routers
     app.include_router(health.router, prefix=app_settings.api_v1_prefix)
+    app.include_router(password_auth.router, prefix=app_settings.api_v1_prefix)
     app.include_router(runtime_config.router, prefix=app_settings.api_v1_prefix)
     app.include_router(projects.router, prefix=app_settings.api_v1_prefix)
     app.include_router(volumes.router, prefix=app_settings.api_v1_prefix)

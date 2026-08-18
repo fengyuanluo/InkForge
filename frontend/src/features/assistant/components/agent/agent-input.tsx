@@ -13,6 +13,7 @@ import { toast } from "@/components";
 import { SimpleSelect, type SelectOption } from "@/components/select";
 import { ProviderIcon } from "@/features/settings/lib/provider-icons";
 import type { AgentPendingMessage, AgentSessionStatus, ReasoningEffort } from "@/lib/agent.types";
+import { useAuthenticatedUrl } from "@/lib/use-authenticated-url";
 
 import { useAgentInputHistory } from "../../hooks/use-agent-input-history";
 import {
@@ -63,6 +64,48 @@ interface AgentInputProps {
   readOnlyMessage?: ReactNode;
   onUploadAttachments: (files: File[]) => Promise<void>;
   [ignoredModeSelectorProp: string]: unknown;
+}
+
+function AgentAttachmentPreview({
+  attachment,
+  onRemove,
+}: {
+  attachment: PendingAgentImageAttachment;
+  onRemove: (attachmentId: string) => void;
+}) {
+  const { t } = useTranslation();
+  const sourceUrl = useAuthenticatedUrl(attachment.previewUrl);
+  const fileName =
+    attachment.file?.name ??
+    attachment.uploadedAttachment?.fileName ??
+    t("writing.aiSidebar.imageFallbackAlt");
+
+  return (
+    <div className="agent-image-attachment-preview">
+      {sourceUrl ? (
+        <PhotoView src={sourceUrl}>
+          <button
+            type="button"
+            className="agent-image-preview-trigger"
+            aria-label={t("writing.aiSidebar.viewImage", { fileName })}
+          >
+            <img
+              src={sourceUrl}
+              alt={fileName}
+            />
+          </button>
+        </PhotoView>
+      ) : null}
+      <button
+        type="button"
+        className="agent-image-attachment-remove"
+        aria-label={t("writing.aiSidebar.removeImage", { fileName })}
+        onClick={() => onRemove(attachment.id)}
+      >
+        <X size={12} />
+      </button>
+    </div>
+  );
 }
 
 export function AgentInput({
@@ -417,39 +460,13 @@ export function AgentInput({
                 {attachments.length > 0 ? (
                   <PhotoProvider>
                     <div className="agent-image-attachment-strip">
-                      {attachments.map((attachment) => {
-                        const fileName =
-                          attachment.file?.name ??
-                          attachment.uploadedAttachment?.fileName ??
-                          t("writing.aiSidebar.imageFallbackAlt");
-                        return (
-                          <div
-                            key={attachment.id}
-                            className="agent-image-attachment-preview"
-                          >
-                            <PhotoView src={attachment.previewUrl}>
-                              <button
-                                type="button"
-                                className="agent-image-preview-trigger"
-                                aria-label={t("writing.aiSidebar.viewImage", { fileName })}
-                              >
-                                <img
-                                  src={attachment.previewUrl}
-                                  alt={fileName}
-                                />
-                              </button>
-                            </PhotoView>
-                            <button
-                              type="button"
-                              className="agent-image-attachment-remove"
-                              aria-label={t("writing.aiSidebar.removeImage", { fileName })}
-                              onClick={() => handleRemoveAttachment(attachment.id)}
-                            >
-                              <X size={12} />
-                            </button>
-                          </div>
-                        );
-                      })}
+                      {attachments.map((attachment) => (
+                        <AgentAttachmentPreview
+                          key={attachment.id}
+                          attachment={attachment}
+                          onRemove={handleRemoveAttachment}
+                        />
+                      ))}
                     </div>
                   </PhotoProvider>
                 ) : null}
