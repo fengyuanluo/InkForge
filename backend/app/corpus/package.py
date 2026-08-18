@@ -1,4 +1,4 @@
-"""OpenFic corpus package v1 validation and conservative TXT conversion."""
+"""InkForge corpus package v1 validation and conservative TXT conversion."""
 
 from __future__ import annotations
 

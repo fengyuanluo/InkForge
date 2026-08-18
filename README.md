@@ -1,15 +1,15 @@
-# OpenFic
+# InkForge
 
-![GitHub Repo stars](https://img.shields.io/github/stars/syrizelink/OpenFic)
+![GitHub Repo stars](https://img.shields.io/github/stars/fengyuanluo/InkForge)
 ![License](https://img.shields.io/badge/License-Apache_2.0-red)
 ![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)
-![GitHub Release](https://img.shields.io/github/v/release/syrizelink/OpenFic?logo=githubactions&logoColor=white&color=yellow)
-![Release Downloads](https://img.shields.io/github/downloads/syrizelink/OpenFic/total?logo=github&logoColor=white&label=Release%20downloads&color=yellow)
+![GitHub Release](https://img.shields.io/github/v/release/fengyuanluo/InkForge?logo=githubactions&logoColor=white&color=yellow)
+![Release Downloads](https://img.shields.io/github/downloads/fengyuanluo/InkForge/total?logo=github&logoColor=white&label=Release%20downloads&color=yellow)
 ![PyPI - Version](https://img.shields.io/pypi/v/openfic?logo=pypi&logoColor=white&color=green)
 
 中文 | [English](./README_EN.md)
 
-**OpenFic** 是一款专为小说创作打造的跨平台、用户友好、AI Native 的一站式 Vibe Writing 工具，构建设定、设计角色、定制工作流，让Agent适应你的写作流程，而非反之。
+**InkForge** 是一款专为小说创作打造的跨平台、用户友好、AI Native 的一站式 Vibe Writing 工具，构建设定、设计角色、定制工作流，让Agent适应你的写作流程，而非反之。
 
 ![Demo Screenshot](./demo.png)
 
@@ -17,7 +17,7 @@
 ## 何时使用
 
 > [!Tip]  
-> *OpenFic 的设计理念是让 Agent 深度参与小说创作过程，而不是替你一键生成没有灵魂的文字，它首先是用户友好的小说写作工具，其次才是面向写作的 AI Agent 系统。*
+> *InkForge 的设计理念是让 Agent 深度参与小说创作过程，而不是替你一键生成没有灵魂的文字，它首先是用户友好的小说写作工具，其次才是面向写作的 AI Agent 系统。*
 
 #### 它适合这些场景：
 
@@ -54,7 +54,7 @@
 如果使用容器方式安装进行自托管是推荐的安装方式。
 
 ```bash
-docker run -d -p 8000:8000 -v "openfic:/data" -v "/host/corpus:/imports:ro" --name openfic ghcr.io/syrizelink/openfic:latest
+docker run -d -p 8000:8000 -v "inkforge:/data" -v "/host/corpus:/imports:ro" --name inkforge ghcr.io/fengyuanluo/inkforge:latest
 ```
 
 
@@ -63,7 +63,9 @@ docker run -d -p 8000:8000 -v "openfic:/data" -v "/host/corpus:/imports:ro" --na
 > [!Warning]  
 > 在开始前，确保你已经安装了Python3.12+
 
-#### 1. 安装OpenFic
+#### 1. 安装 InkForge
+
+> Python 包与 CLI 为兼容现有安装继续使用 `openfic` 名称。
 
 ```bash
 pip install openfic
@@ -78,7 +80,7 @@ openfic serve
 
 ### 🖥桌面应用
 
-前往 [Release Page](https://github.com/syrizelink/OpenFic/releases) 下载桌面应用，在你的系统上原生运行，而无需额外步骤。
+前往 [Release Page](https://github.com/fengyuanluo/InkForge/releases) 下载桌面应用，在你的系统上原生运行，而无需额外步骤。
 
 ## 贡献
 
@@ -90,19 +92,6 @@ openfic serve
 
 查看 [CONTRIBUTING.md](./CONTRIBUTING.md) 获取详细的贡献指南。
 
-## Star History
-
-<a href="https://www.star-history.com/?repos=syrizelink%2FOpenFic&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=syrizelink/OpenFic&type=date&theme=dark&legend=top-left&sealed_token=JHQpP1A05gPA9RleC2GLLnXJ5mg_nQHq_VosoaeQPU2yPGneRUJNEyxaEy--2atezknlCUb5HxLE0HB31gJAOr1ezJZHYW92VUSlWh0Ej0bkt4Q3AWVUHQ" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=syrizelink/OpenFic&type=date&legend=top-left&sealed_token=JHQpP1A05gPA9RleC2GLLnXJ5mg_nQHq_VosoaeQPU2yPGneRUJNEyxaEy--2atezknlCUb5HxLE0HB31gJAOr1ezJZHYW92VUSlWh0Ej0bkt4Q3AWVUHQ" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=syrizelink/OpenFic&type=date&legend=top-left&sealed_token=JHQpP1A05gPA9RleC2GLLnXJ5mg_nQHq_VosoaeQPU2yPGneRUJNEyxaEy--2atezknlCUb5HxLE0HB31gJAOr1ezJZHYW92VUSlWh0Ej0bkt4Q3AWVUHQ" />
- </picture>
-</a>
-
-## Repobeats
-
-![Repobeats](https://repobeats.axiom.co/api/embed/a3b67d74bb71044ef2385d65bc469090ee3e0fe6.svg "Repobeats analytics image")
 
 ## 致谢
 

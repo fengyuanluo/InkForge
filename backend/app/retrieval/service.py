@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-OpenFic retrieval wrapper service.
+InkForge retrieval wrapper service.
 """
 
 from __future__ import annotations

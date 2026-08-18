@@ -33,7 +33,7 @@ jobs:
         run: |
           RELEASE_TAG=${GITHUB_REF#refs/tags/}
           VERSION=${RELEASE_TAG#v}
-          IMAGE=ghcr.io/${{ github.repository_owner }}/openfic
+          IMAGE=ghcr.io/${{ github.repository_owner }}/inkforge
           IMAGE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
           MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2)
 
@@ -379,9 +379,9 @@ jobs:
       - name: 发布 Windows 自动更新产物
         run: |
           gh release upload "${{ needs.context.outputs.release_tag }}" \
-            desktop/dist-electron/OpenFic-*-win-*-setup.exe \
-            desktop/dist-electron/OpenFic-*-win-*-setup.exe.blockmap \
-            desktop/dist-electron/OpenFic-*-win-*.zip \
+            desktop/dist-electron/InkForge-*-win-*-setup.exe \
+            desktop/dist-electron/InkForge-*-win-*-setup.exe.blockmap \
+            desktop/dist-electron/InkForge-*-win-*.zip \
             desktop/dist-electron/latest*.yml \
             --clobber
 
