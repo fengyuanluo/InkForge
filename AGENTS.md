@@ -15,8 +15,8 @@
 
 ## 仓库与远端
 
-- 官方仓库：`https://github.com/syrizelink/OpenFic`，本地远端名为 `upstream`，只允许 fetch。
-- 二开仓库：`https://github.com/fengyuanluo/OpenFic`，本地远端名为 `origin`，承载开发与发布。
+- 官方源使用本地远端名 `upstream`，只允许 fetch。
+- InkForge 仓库：`https://github.com/fengyuanluo/InkForge`，本地远端名为 `origin`，承载开发与发布。
 - `origin/main` 是二开稳定主分支；`upstream/main` 是官方基线，不创建长期镜像分支。
 - 禁止向 `upstream` push。若远端配置与上述约定不一致，先停止并查明原因。
 - `main` 禁止 rebase、force-push 和改写历史。仓库初始化完成后，所有业务修改通过短期分支和 PR 合入。
@@ -115,7 +115,7 @@ React 19、TypeScript、Vite Plus、TanStack Query、Zustand、Tiptap 前端。
 Electron 桌面壳，负责安装/启动本地后端、数据目录、备份、更新和原生窗口。
 
 - `src/main/`：Electron 主进程、窗口、IPC、后端进程、数据与更新管理。
-- `src/main/runtime/`：Python/OpenFic 运行时下载、安装、启动和归档处理。
+- `src/main/runtime/`：Python/InkForge 运行时下载、安装、启动和归档处理。
 - `src/preload/`：受控的渲染进程桥接。
 - `src/shared/`：主进程、preload 与 UI 共享的 IPC 和配置类型。
 - `src/ui/`：桌面安装与管理界面，不是主 Web 应用界面。

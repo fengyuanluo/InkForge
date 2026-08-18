@@ -1,22 +1,22 @@
-# OpenFic
+# InkForge
 
-![GitHub Repo stars](https://img.shields.io/github/stars/syrizelink/OpenFic)
+![GitHub Repo stars](https://img.shields.io/github/stars/fengyuanluo/InkForge)
 ![License](https://img.shields.io/badge/License-Apache_2.0-red)
 ![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)
-![GitHub Release](https://img.shields.io/github/v/release/syrizelink/OpenFic?logo=githubactions&logoColor=white&color=yellow)
-![Release Downloads](https://img.shields.io/github/downloads/syrizelink/OpenFic/total?logo=github&logoColor=white&label=Release%20downloads&color=yellow)
+![GitHub Release](https://img.shields.io/github/v/release/fengyuanluo/InkForge?logo=githubactions&logoColor=white&color=yellow)
+![Release Downloads](https://img.shields.io/github/downloads/fengyuanluo/InkForge/total?logo=github&logoColor=white&label=Release%20downloads&color=yellow)
 ![PyPI - Version](https://img.shields.io/pypi/v/openfic?logo=pypi&logoColor=white&color=green)
 
 [中文](./README.md) | English
 
-**OpenFic** is an all-in-one, cross-platform, AI-native writing tool built for fiction authors. It helps you build world, design characters, and shape custom workflows, so the Agent fits your writing process instead of forcing you into its own.
+**InkForge** is an all-in-one, cross-platform, AI-native writing tool built for fiction authors. It helps you build world, design characters, and shape custom workflows, so the Agent fits your writing process instead of forcing you into its own.
 
 ![Demo Screenshot](./demo.png)
 
-## When to Use OpenFic
+## When to Use InkForge
 
 > [!Tip]  
-> *OpenFic is designed for Agent-assisted writing, not one-click novel generation. It is first and foremost a writing tool for fiction, and then an AI Agent system built around that workflow.*
+> *InkForge is designed for Agent-assisted writing, not one-click novel generation. It is first and foremost a writing tool for fiction, and then an AI Agent system built around that workflow.*
 
 #### It works well when you:
 
@@ -48,10 +48,10 @@
 
 ### 🐳 Docker (Recommended)
 
-If you are self-hosting, Docker is the recommended way to run OpenFic.
+If you are self-hosting, Docker is the recommended way to run InkForge.
 
 ```bash
-docker run -d -p 8000:8000 -v "openfic:/data" -v "/host/corpus:/imports:ro" --name openfic ghcr.io/syrizelink/openfic:latest
+docker run -d -p 8000:8000 -v "inkforge:/data" -v "/host/corpus:/imports:ro" --name inkforge ghcr.io/fengyuanluo/inkforge:latest
 ```
 
 ### 🐍 Python pip
@@ -59,7 +59,9 @@ docker run -d -p 8000:8000 -v "openfic:/data" -v "/host/corpus:/imports:ro" --na
 > [!WARNING]  
 > Before you start, make sure Python 3.12+ is installed.
 
-#### 1. Install OpenFic
+#### 1. Install InkForge
+
+> The Python package and CLI keep the `openfic` name for compatibility with existing installations.
 
 ```bash
 pip install openfic
@@ -73,7 +75,7 @@ openfic serve
 
 ### 🖥 Desktop App
 
-Download the desktop app from [the Release Page](https://github.com/syrizelink/OpenFic/releases) and run it natively on your system.
+Download the desktop app from [the Release Page](https://github.com/fengyuanluo/InkForge/releases) and run it natively on your system.
 
 ## Contributing
 
@@ -85,19 +87,6 @@ Contributions of any kind are welcome. If you have ideas, suggestions, or code i
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed contribution guidelines.
 
-## Star History
-
-<a href="https://www.star-history.com/?repos=syrizelink%2FOpenFic&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=syrizelink/OpenFic&type=date&theme=dark&legend=top-left&sealed_token=JHQpP1A05gPA9RleC2GLLnXJ5mg_nQHq_VosoaeQPU2yPGneRUJNEyxaEy--2atezknlCUb5HxLE0HB31gJAOr1ezJZHYW92VUSlWh0Ej0bkt4Q3AWVUHQ" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=syrizelink/OpenFic&type=date&legend=top-left&sealed_token=JHQpP1A05gPA9RleC2GLLnXJ5mg_nQHq_VosoaeQPU2yPGneRUJNEyxaEy--2atezknlCUb5HxLE0HB31gJAOr1ezJZHYW92VUSlWh0Ej0bkt4Q3AWVUHQ" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=syrizelink/OpenFic&type=date&legend=top-left&sealed_token=JHQpP1A05gPA9RleC2GLLnXJ5mg_nQHq_VosoaeQPU2yPGneRUJNEyxaEy--2atezknlCUb5HxLE0HB31gJAOr1ezJZHYW92VUSlWh0Ej0bkt4Q3AWVUHQ" />
- </picture>
-</a>
-
-## Repobeats
-
-![Repobeats](https://repobeats.axiom.co/api/embed/a3b67d74bb71044ef2385d65bc469090ee3e0fe6.svg "Repobeats analytics image")
 
 ## Acknowledgements
 

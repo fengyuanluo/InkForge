@@ -195,7 +195,7 @@ export interface DataInfo {
 }
 
 export interface InspectDataDirResult {
-  /** Whether the directory contains recognizable OpenFic data. */
+  /** Whether the directory contains recognizable InkForge data. */
   valid: boolean;
   hasData: boolean;
   entryCount: number;

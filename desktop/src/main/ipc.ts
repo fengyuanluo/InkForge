@@ -43,7 +43,7 @@ import { captureException } from "./telemetry.js";
 import type { BackendProcessHandle } from "./process.js";
 import type { DesktopConfig, DesktopInstance } from "../shared/config.js";
 
-const PROJECT_HOME_URL = "https://github.com/syrizelink/OpenFic";
+const PROJECT_HOME_URL = "https://github.com/fengyuanluo/InkForge";
 const BUG_REPORT_URL = `${PROJECT_HOME_URL}/issues/new?template=bug-report.yml`;
 const FEATURE_SUGGESTION_URL = `${PROJECT_HOME_URL}/issues/new?template=feature-request.yml`;
 const MIN_ZOOM_FACTOR = 0.7;
@@ -222,7 +222,7 @@ export function registerIpc(context: IpcContext): void {
     );
     const options: Electron.SaveDialogOptions = {
       defaultPath,
-      filters: [{ name: "OpenFic 数据备份", extensions: ["tar.gz"] }],
+      filters: [{ name: "InkForge 数据备份", extensions: ["tar.gz"] }],
       title: "备份作品数据",
     };
     const result = window
@@ -236,7 +236,7 @@ export function registerIpc(context: IpcContext): void {
     const window = context.shellWindow();
     const options: Electron.OpenDialogOptions = {
       properties: ["openFile"],
-      filters: [{ name: "OpenFic 数据备份", extensions: ["tar.gz"] }],
+      filters: [{ name: "InkForge 数据备份", extensions: ["tar.gz"] }],
       title: "选择数据备份文件",
     };
     const result = window
@@ -269,7 +269,7 @@ export function registerIpc(context: IpcContext): void {
 
   ipcMain.handle(IpcChannels.migrateData, async (_event, request: MigrateDataRequest): Promise<MigrateDataResult> => {
     const config = await readDesktopConfig();
-    if (!config) throw new Error("未找到 OpenFic 实例配置");
+    if (!config) throw new Error("未找到 InkForge 实例配置");
     const instance = config.instances.find((item) => item.id === request.instanceId);
     if (!instance) throw new Error("实例不存在");
     const sourceDir = resolveDataDir(instance);
@@ -409,7 +409,7 @@ export function registerIpc(context: IpcContext): void {
       startupProgress.begin({
         step: "ready",
         title: "服务已就绪",
-        message: "OpenFic 已准备完成",
+        message: "InkForge 已准备完成",
         progress: 1,
       });
       startupProgress.complete();
@@ -450,7 +450,7 @@ export function registerIpc(context: IpcContext): void {
       webContents.closeDevTools();
       return;
     }
-    webContents.openDevTools({ mode: "detach", title: "OpenFic 开发者工具" });
+    webContents.openDevTools({ mode: "detach", title: "InkForge 开发者工具" });
   });
   ipcMain.handle(IpcChannels.closeWindow, async () => {
     context.shellWindow()?.close();

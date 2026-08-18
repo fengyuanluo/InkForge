@@ -1,13 +1,13 @@
 appId: com.openfic.app
-productName: OpenFic
+productName: InkForge
 
 directories:
   output: dist-electron
 
 publish:
   provider: github
-  owner: syrizelink
-  repo: OpenFic
+  owner: fengyuanluo
+  repo: InkForge
   releaseType: release
 
 electronLanguages:
@@ -27,7 +27,7 @@ extraResources:
     to: app-update.yml
 
 win:
-  artifactName: OpenFic-${version}-win-${arch}.${ext}
+  artifactName: InkForge-${version}-win-${arch}.${ext}
   target:
     - nsis
     - zip
@@ -35,10 +35,10 @@ win:
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
-  artifactName: OpenFic-${version}-win-${arch}-setup.${ext}
+  artifactName: InkForge-${version}-win-${arch}-setup.${ext}
 
 mac:
-  artifactName: OpenFic-${version}-mac-${arch}.${ext}
+  artifactName: InkForge-${version}-mac-${arch}.${ext}
   target:
     - dmg
     - zip
@@ -46,7 +46,7 @@ mac:
   identity: null
 
 linux:
-  artifactName: OpenFic-${version}-linux-${arch}.${ext}
+  artifactName: InkForge-${version}-linux-${arch}.${ext}
   target:
     - AppImage
     - tar.gz

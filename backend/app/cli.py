@@ -1,4 +1,4 @@
-"""OpenFic CLI 入口。
+"""InkForge CLI 入口。
 
 用于以 pipx/uvx 安装后启动本地服务。
 桌面端（PyInstaller）与 Docker 不走此入口。
@@ -77,7 +77,7 @@ def handle_serve(args: argparse.Namespace) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="openfic",
-        description="OpenFic 本地服务启动器",
+        description="InkForge 本地服务启动器",
     )
 
     subparsers = parser.add_subparsers(dest="command")

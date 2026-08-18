@@ -119,7 +119,7 @@ async function probePypiIndex(indexUrl: string, expectedVersion: string): Promis
     const packageIndex = await response.text();
     const elapsedMs = performance.now() - startedAt;
     if (!packageIndex.includes(`openfic-${expectedVersion}`)) {
-      appendLog("runtime", `Python 包索引未找到 OpenFic ${expectedVersion}：${indexUrl}`);
+      appendLog("runtime", `Python 包索引未找到 InkForge ${expectedVersion}：${indexUrl}`);
       return null;
     }
     appendLog("runtime", `Python 包索引可用：${indexUrl}，耗时 ${Math.round(elapsedMs)}ms`);
@@ -322,15 +322,15 @@ export async function inspectOpenFicRuntime(
   if (installedVersion !== expectedVersion) {
     return {
       complete: false,
-      message: installedVersion ? "OpenFic 后端版本不匹配" : "未找到 OpenFic 后端",
+      message: installedVersion ? "InkForge 后端版本不匹配" : "未找到 InkForge 后端",
     };
   }
   const openFicCliPath = resolveOpenFicCliPath(venvPythonPath);
   if (!(await pathExists(openFicCliPath)) || !(await succeeds(openFicCliPath, ["--help"], runtimeDir))) {
-    return { complete: false, message: "OpenFic 命令行程序缺失或不可用" };
+    return { complete: false, message: "InkForge 命令行程序缺失或不可用" };
   }
 
-  return { complete: true, message: "OpenFic 运行环境已完整安装" };
+  return { complete: true, message: "InkForge 运行环境已完整安装" };
 }
 
 export async function ensureOpenFicRuntime(
@@ -345,7 +345,7 @@ export async function ensureOpenFicRuntime(
   let pypiEnvironments: Promise<NodeJS.ProcessEnv[]> | null = null;
   const getPypiEnvironments = () => (pypiEnvironments ??= getPypiEnvironmentsBySpeed(expectedVersion));
 
-  appendLog("runtime", `开始检查 OpenFic 运行环境：${runtimeDir}`);
+  appendLog("runtime", `开始检查 InkForge 运行环境：${runtimeDir}`);
   await mkdir(runtimeDir, { recursive: true });
 
   if (python.wasReplaced) {
@@ -358,7 +358,7 @@ export async function ensureOpenFicRuntime(
   if (!venvIsUsable) {
     appendLog("runtime", "虚拟环境不存在或不可用，开始创建");
     await rm(venvDir, { recursive: true, force: true });
-    onProgress("create-venv", "创建 OpenFic 运行环境");
+    onProgress("create-venv", "创建 InkForge 运行环境");
     await run(python.pythonPath, ["-m", "venv", venvDir], runtimeDir);
   }
 
@@ -386,9 +386,9 @@ export async function ensureOpenFicRuntime(
   if (installedVersion !== expectedVersion || !openFicCliIsUsable) {
     appendLog(
       "runtime",
-      installedVersion ? `OpenFic 后端需要更新：${installedVersion} -> ${expectedVersion}` : "OpenFic 后端尚未安装",
+      installedVersion ? `InkForge 后端需要更新：${installedVersion} -> ${expectedVersion}` : "InkForge 后端尚未安装",
     );
-    onProgress("install-openfic", installedVersion ? "更新 OpenFic 后端" : "安装 OpenFic 后端");
+    onProgress("install-openfic", installedVersion ? "更新 InkForge 后端" : "安装 InkForge 后端");
     const packageIndexEnvironments = await getPypiEnvironments();
     const installCommand = createOpenFicInstallCommand(
       venvPythonPath,
@@ -400,11 +400,11 @@ export async function ensureOpenFicRuntime(
     );
   }
 
-  appendLog("runtime", "OpenFic 运行环境检查完成");
+  appendLog("runtime", "InkForge 运行环境检查完成");
   return { uvPath, venvPythonPath };
 }
 
-const STARTUP_TITLE = "启动 OpenFic 服务";
+const STARTUP_TITLE = "启动 InkForge 服务";
 
 type StartupLogProgress = Omit<ProgressUpdate, "title">;
 
@@ -425,10 +425,10 @@ const STARTUP_LOG_RULES: StartupLogRule[] = [
     }),
   },
   {
-    match: /Starting OpenFic/,
+    match: /Starting InkForge/,
     toProgress: () => ({
       step: "initialize-backend",
-      message: "正在启动 OpenFic 服务...",
+      message: "正在启动 InkForge 服务...",
       progress: 0.7,
     }),
   },
@@ -528,7 +528,7 @@ const STARTUP_LOG_RULES: StartupLogRule[] = [
     match: /Application startup complete/,
     toProgress: () => ({
       step: "complete-backend-startup",
-      message: "OpenFic 服务已完成初始化",
+      message: "InkForge 服务已完成初始化",
       progress: 0.97,
     }),
   },
@@ -584,7 +584,7 @@ export async function startLocalOpenFicBackend(
   throwIfAborted(signal);
   startupProgress?.begin({
     step: "start-backend",
-    title: "启动 OpenFic 服务",
+    title: "启动 InkForge 服务",
     message: "正在分配本地服务端口",
     progress: 0.6,
   });
@@ -620,7 +620,7 @@ export async function startLocalOpenFicBackend(
     });
     startupProgress?.begin({
       step: "check-health",
-      title: "启动 OpenFic 服务",
+      title: "启动 InkForge 服务",
       message: "服务已响应，正在验证版本",
       progress: 0.98,
     });

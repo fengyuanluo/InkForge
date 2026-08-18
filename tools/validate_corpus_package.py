@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate an OpenFic corpus v1 directory or ZIP using only the standard library."""
+"""Validate an InkForge corpus v1 directory or ZIP using only the standard library."""
 
 from __future__ import annotations
 

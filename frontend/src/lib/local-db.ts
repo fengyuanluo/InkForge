@@ -95,7 +95,7 @@ interface AgentInputHistory {
 }
 
 /**
- * OpenFic 本地数据库
+ * InkForge 本地数据库
  */
 class OpenFicDB extends Dexie {
   projectLastChapters!: EntityTable<ProjectLastChapter, "projectId">;

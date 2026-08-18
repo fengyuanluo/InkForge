@@ -133,7 +133,7 @@ function highlightCode(
   pendingHighlightCache.set(cacheKey, promise);
   void promise
     .then((result) => callback?.(result))
-    .catch((error) => console.error("[OpenFic Code] Failed to highlight code:", error))
+    .catch((error) => console.error("[InkForge Code] Failed to highlight code:", error))
     .finally(() => pendingHighlightCache.delete(cacheKey));
   return null;
 }

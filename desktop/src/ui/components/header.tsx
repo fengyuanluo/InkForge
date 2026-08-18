@@ -373,7 +373,7 @@ export function DesktopHeader({
   return (
     <header className="desktop-header">
       <div className="desktop-titlebar-left">
-        <div className="desktop-titlebar-brand">OpenFic</div>
+        <div className="desktop-titlebar-brand">InkForge</div>
         <nav className="desktop-menu-bar" aria-label={t("desktop.header.appMenu")} ref={menuBarRef}>
           <div className="desktop-menu">
             <button

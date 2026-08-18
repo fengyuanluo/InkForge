@@ -1,4 +1,4 @@
-# OpenFic Corpus Package v1
+# InkForge Corpus Package v1
 
 The standard package is a directory, or a ZIP containing that directory:
 
@@ -46,7 +46,7 @@ strictly increasing.
 UTF-8. Prepare complex cleanup, encoding repair, metadata extraction, and
 structure parsing before creating the package.
 
-Validate a package without starting OpenFic:
+Validate a package without starting InkForge:
 
 ```bash
 python tools/validate_corpus_package.py /path/to/package-or.zip
