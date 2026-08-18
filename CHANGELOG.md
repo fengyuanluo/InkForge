@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/fengyuanluo/InkForge/compare/v0.11.1...v0.12.0) (2026-08-18)
+
+
+### ✨ 新功能
+
+* **auth:** add single-password access control ([#4](https://github.com/fengyuanluo/InkForge/issues/4)) ([781a0eb](https://github.com/fengyuanluo/InkForge/commit/781a0eb25536eddbd420975e9a2522299a27f640))
+
 ## [0.11.1](https://github.com/fengyuanluo/InkForge/compare/v0.11.0...v0.11.1) (2026-08-18)
 
 
