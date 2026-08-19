@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.13.0](https://github.com/fengyuanluo/InkForge/compare/v0.12.0...v0.13.0) (2026-08-19)
+
+
+### ✨ 新功能
+
+* **research:** add novel market research skill ([#8](https://github.com/fengyuanluo/InkForge/issues/8)) ([1660d61](https://github.com/fengyuanluo/InkForge/commit/1660d61f7906a4845bf186dbccba28d331b680f4))
+
+
+### 🐛 问题修复
+
+* **openrouter:** 修复 OpenRouter SDK 超时单位混淆导致请求卡住的问题 ([#319](https://github.com/fengyuanluo/InkForge/issues/319)) ([422b951](https://github.com/fengyuanluo/InkForge/commit/422b951204e25538e6df752573f5e2f3b4fc327a))
+
+
+### 📚 文档
+
+* 更新项目文档 ([#320](https://github.com/fengyuanluo/InkForge/issues/320)) ([54f18e1](https://github.com/fengyuanluo/InkForge/commit/54f18e1b1aa0bad44d178f68cd01fdeab0149e60))
+
+
+### 🔧 杂项
+
+* **branding:** 更新品牌图标与应用标识 ([#321](https://github.com/fengyuanluo/InkForge/issues/321)) ([e73b900](https://github.com/fengyuanluo/InkForge/commit/e73b900ccb8bd2486a7f1920cacc598cf6bf141a))
+* **desktop:** 添加桌面端前进后退导航 ([#323](https://github.com/fengyuanluo/InkForge/issues/323)) ([70b4af7](https://github.com/fengyuanluo/InkForge/commit/70b4af7ced68bf43c086def2ddd37a8a36fda2f2))
+* **frontend:** 支持提问面板折叠 ([#322](https://github.com/fengyuanluo/InkForge/issues/322)) ([1b0b253](https://github.com/fengyuanluo/InkForge/commit/1b0b253e0415a2e6847a787a7f3cdcd6b80dff0d))
+* **sync:** 同步 upstream/main 2026-08-19 ([#6](https://github.com/fengyuanluo/InkForge/issues/6)) ([48de8fd](https://github.com/fengyuanluo/InkForge/commit/48de8fd03dd82864f7460cb2705d122d9cd71db1))
+
 ## [0.12.0](https://github.com/fengyuanluo/InkForge/compare/v0.11.1...v0.12.0) (2026-08-18)
 
 
