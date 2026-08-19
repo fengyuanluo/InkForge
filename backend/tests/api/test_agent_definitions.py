@@ -23,7 +23,7 @@ async def test_list_agent_definitions(client: AsyncClient):
     plan = next(d for d in data["definitions"] if d["key"] == "plan")
     assert build["kind"] == "primary"
     assert plan["kind"] == "primary"
-    assert build["enabled_skills"] == []
+    assert build["enabled_skills"] == ["builtin-skill--novel-project-research"]
     assert plan["enabled_skills"] == []
     assert build["color"] == "blue"
     assert build["icon"] == "pen-tool"
