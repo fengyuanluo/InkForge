@@ -59,6 +59,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
                 "chapter_write",
                 "summary_read",
                 "corpus_read",
+                "market_research",
                 "world_read",
                 "world_write",
                 "note_read",
@@ -66,7 +67,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
                 "character_read",
                 "character_write"
             ),
-            enabled_skills=(),
+            enabled_skills=("builtin-skill--novel-project-research",),
             metadata=MappingProxyType({}),
             color="blue",
             icon="pen-tool",
@@ -93,6 +94,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
                 "chapter_read",
                 "summary_read",
                 "corpus_read",
+                "market_research",
                 "world_read",
                 "note_read",
                 "character_read",
@@ -121,6 +123,7 @@ DEFAULT_AGENT_DEFINITIONS: Mapping[str, AgentDefinition] = MappingProxyType(
                 "chapter_read",
                 "summary_read",
                 "corpus_read",
+                "market_research",
                 "world_read",
                 "note_read",
                 "character_read"

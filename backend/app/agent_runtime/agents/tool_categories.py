@@ -24,6 +24,11 @@ TOOL_CATEGORIES: Mapping[str, tuple[str, ...]] = MappingProxyType(
             "read_range_summaries",
         ),
         "corpus_read": ("search_corpus", "read_corpus_unit"),
+        "market_research": (
+            "discover_novel_rankings",
+            "list_ranked_novels",
+            "read_novel_opening",
+        ),
         "character_read": ("list_characters", "read_character"),
         "character_write": (
             "create_character",
@@ -69,6 +74,7 @@ TOOL_CATEGORY_DISPLAY: Mapping[str, str] = MappingProxyType(
         "chapter_read": "章节读取",
         "summary_read": "摘要读取",
         "corpus_read": "语料库读取",
+        "market_research": "网文市场研究",
         "character_read": "角色读取",
         "character_write": "角色写入",
         "world_read": "世界书读取",

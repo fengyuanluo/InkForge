@@ -28,6 +28,9 @@ _PERMISSION_METADATA_BY_TOOL_NAME = {
     "delete_volume": ToolPermissionMetadata("delete_volume", "ask"),
     "delete_world_entry": ToolPermissionMetadata("delete_world_entry", "ask"),
     "dispatch_subagent": ToolPermissionMetadata("dispatch_subagent", "allow"),
+    "discover_novel_rankings": ToolPermissionMetadata(
+        "discover_novel_rankings", "allow"
+    ),
     "edit_chapter": ToolPermissionMetadata("edit_chapter", "ask"),
     "edit_character": ToolPermissionMetadata("edit_character", "ask"),
     "edit_note": ToolPermissionMetadata("edit_note", "ask"),
@@ -37,6 +40,7 @@ _PERMISSION_METADATA_BY_TOOL_NAME = {
     "list_chapters": ToolPermissionMetadata("list_chapters", "allow"),
     "list_characters": ToolPermissionMetadata("list_characters", "allow"),
     "list_notes": ToolPermissionMetadata("list_notes", "allow"),
+    "list_ranked_novels": ToolPermissionMetadata("list_ranked_novels", "allow"),
     "list_volumes": ToolPermissionMetadata("list_volumes", "allow"),
     "list_world_entries": ToolPermissionMetadata("list_world_entries", "allow"),
     "move_chapter_to_volume": ToolPermissionMetadata("move_chapter_to_volume", "ask"),
@@ -47,6 +51,7 @@ _PERMISSION_METADATA_BY_TOOL_NAME = {
     "read_character": ToolPermissionMetadata("read_character", "allow"),
     "read_corpus_unit": ToolPermissionMetadata("read_corpus_unit", "allow"),
     "read_note": ToolPermissionMetadata("read_note", "allow"),
+    "read_novel_opening": ToolPermissionMetadata("read_novel_opening", "allow"),
     "read_range_summaries": ToolPermissionMetadata("read_range_summaries", "allow"),
     "read_world_entry": ToolPermissionMetadata("read_world_entry", "allow"),
     "recycle_subagent": ToolPermissionMetadata("recycle_subagent", "allow"),

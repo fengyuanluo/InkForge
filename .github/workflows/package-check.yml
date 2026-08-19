@@ -247,7 +247,6 @@ jobs:
           if ! command -v Xvfb >/dev/null; then packages+=(xvfb); fi
           if ! command -v xdotool >/dev/null; then packages+=(xdotool); fi
           if ((${#packages[@]})); then
-            sudo apt-get update
             sudo apt-get install --yes "${packages[@]}"
           fi
 
