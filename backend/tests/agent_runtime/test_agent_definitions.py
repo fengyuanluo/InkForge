@@ -23,6 +23,8 @@ def test_default_agent_definitions_include_two_primary_agents_and_six_subagents(
     build = get_default_agent_definition("build")
     assert build.kind == "primary"
     assert build.prompt_agent_name == "build"
+    assert "market_research" in build.enabled_tool_categories
+    assert build.enabled_skills == ("builtin-skill--novel-project-research",)
     assert build.delegatable_agents == (
         "explore",
         "composer",
@@ -35,6 +37,7 @@ def test_default_agent_definitions_include_two_primary_agents_and_six_subagents(
     plan = get_default_agent_definition("plan")
     assert plan.kind == "primary"
     assert plan.prompt_agent_name == "plan"
+    assert "market_research" in plan.enabled_tool_categories
     assert plan.delegatable_agents == (
         "explore",
         "composer",
@@ -43,6 +46,9 @@ def test_default_agent_definitions_include_two_primary_agents_and_six_subagents(
         "actor",
         "reviewer",
     )
+
+    explore = get_default_agent_definition("explore")
+    assert "market_research" in explore.enabled_tool_categories
 
     for key in DEFAULT_AGENT_KEYS[2:]:
         definition = get_default_agent_definition(key)
