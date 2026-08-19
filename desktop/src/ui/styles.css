@@ -496,15 +496,21 @@ body {
   color: var(--gray-11);
   font-size: 13px;
   font-weight: 650;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .desktop-titlebar-left {
   display: inline-flex;
   align-items: center;
   min-width: 0;
-  gap: 18px;
+  gap: 10px;
   -webkit-app-region: no-drag;
+}
+
+.desktop-navigation {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .desktop-menu-bar {
@@ -672,6 +678,7 @@ body {
 
 .titlebar-button:disabled:hover {
   background: transparent;
+  color: var(--gray-11);
 }
 
 .titlebar-update-checking {

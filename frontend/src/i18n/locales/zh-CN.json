@@ -890,6 +890,10 @@
     "editorAutoConvertPunctuationHint": "输入常见标点的半角形式时，自动转换为全角。",
     "editorAutoConvertPunctuationTooltipSymbols": "支持的符号：, . ? ! : ; ( ) \" '",
     "editorAutoConvertPunctuationTooltipLabel": "自动转换半角符号说明",
+    "editorAutoPairSymbols": "自动补齐成对符号",
+    "editorAutoPairSymbolsHint": "输入成对的符号时，自动补齐对应符号。",
+    "editorAutoPairSymbolsTooltipSymbols": "支持的符号：() [] {} \"\" '' （）【】「」『』《》“”‘’",
+    "editorAutoPairSymbolsTooltipLabel": "自动补齐成对符号说明",
     "increaseFontSize": "增大字号",
     "decreaseFontSize": "减小字号",
     "fontOptionSystemDefault": "系统默认",
@@ -1897,6 +1901,8 @@
     },
     "specialPanels": {
       "clarificationTitle": "需要补充信息",
+      "collapseQuestionPanel": "收起提问面板",
+      "expandQuestionPanel": "展开提问面板",
       "approvalTitle": "需要审批",
       "deny": "拒绝",
       "approve": "执行"

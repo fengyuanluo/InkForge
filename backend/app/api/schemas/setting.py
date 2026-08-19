@@ -93,6 +93,10 @@ class SettingsResponse(BaseModel):
         default=False,
         description="输入半角标点符号时是否自动转换为全角",
     )
+    editor_auto_pair_symbols: bool = Field(
+        default=False,
+        description="输入成对符号的左符号时是否自动补齐右符号",
+    )
 
 
 class SettingsUpdateRequest(BaseModel):
@@ -168,4 +172,8 @@ class SettingsUpdateRequest(BaseModel):
     editor_auto_convert_punctuation: bool | None = Field(
         default=None,
         description="输入半角标点符号时是否自动转换为全角",
+    )
+    editor_auto_pair_symbols: bool | None = Field(
+        default=None,
+        description="输入成对符号的左符号时是否自动补齐右符号",
     )

@@ -1,5 +1,6 @@
 appId: com.openfic.app
 productName: InkForge
+copyright: Copyright (c) 2026 InkForge contributors
 
 directories:
   output: dist-electron
@@ -47,6 +48,9 @@ mac:
 
 linux:
   artifactName: InkForge-${version}-linux-${arch}.${ext}
+  synopsis: An AI-native writing tool for fiction authors
+  description: InkForge is an AI-native, cross-platform writing tool built for fiction authors.
+  vendor: fengyuanluo
   target:
     - AppImage
     - tar.gz
