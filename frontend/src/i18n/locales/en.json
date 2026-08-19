@@ -890,6 +890,10 @@
     "editorAutoConvertPunctuationHint": "Automatically convert common half-width punctuation to full-width while typing.",
     "editorAutoConvertPunctuationTooltipSymbols": "Supported symbols: , . ? ! : ; ( ) \" '",
     "editorAutoConvertPunctuationTooltipLabel": "About auto-converting half-width punctuation",
+    "editorAutoPairSymbols": "Auto-complete paired symbols",
+    "editorAutoPairSymbolsHint": "Automatically complete paired symbols while typing.",
+    "editorAutoPairSymbolsTooltipSymbols": "Supported symbols: () [] {} \"\" '' （）【】「」『』《》“”‘’",
+    "editorAutoPairSymbolsTooltipLabel": "About auto-completing paired symbols",
     "increaseFontSize": "Increase font size",
     "decreaseFontSize": "Decrease font size",
     "fontOptionSystemDefault": "System default",
@@ -1834,6 +1838,8 @@
     },
     "specialPanels": {
       "clarificationTitle": "More information needed",
+      "collapseQuestionPanel": "Collapse question panel",
+      "expandQuestionPanel": "Expand question panel",
       "approvalTitle": "Approval required",
       "deny": "Deny",
       "approve": "Run"
