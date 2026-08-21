@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.13.1](https://github.com/fengyuanluo/InkForge/compare/v0.13.0...v0.13.1) (2026-08-21)
+
+
+### 🐛 问题修复
+
+* **skills:** preserve metadata and render research tools ([#9](https://github.com/fengyuanluo/InkForge/issues/9)) ([f82c4cc](https://github.com/fengyuanluo/InkForge/commit/f82c4cce6be498426aabc857b234f2947e3612c4))
+
+
+### 🔧 杂项
+
+* **ci:** 仅保留 Docker 自动发布 ([dcb33f2](https://github.com/fengyuanluo/InkForge/commit/dcb33f28017737d2d8823f95977895532bf853f9)), closes [#12](https://github.com/fengyuanluo/InkForge/issues/12)
+* **desktop:** 支持实例删除 ([#324](https://github.com/fengyuanluo/InkForge/issues/324)) ([128b057](https://github.com/fengyuanluo/InkForge/commit/128b0576b1e94e93bde7ff9a51c9ce727f4751e1))
+* **main:** release 0.10.1 ([#310](https://github.com/fengyuanluo/InkForge/issues/310)) ([bbe1923](https://github.com/fengyuanluo/InkForge/commit/bbe1923b3bbf35d66bd3aa4f73e396ec1412df27))
+* **sync:** merge upstream v0.10.1 ([73968c7](https://github.com/fengyuanluo/InkForge/commit/73968c7f368256a6d1582b41130c45a2d763aa89))
+* **sync:** merge upstream v0.10.1 ([#11](https://github.com/fengyuanluo/InkForge/issues/11)) ([e8530dc](https://github.com/fengyuanluo/InkForge/commit/e8530dcdb7b5352fca6b010eb4be21225d9ed1cd))
+
 ## [0.13.0](https://github.com/fengyuanluo/InkForge/compare/v0.12.0...v0.13.0) (2026-08-19)
 
 
