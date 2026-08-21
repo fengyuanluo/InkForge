@@ -75,6 +75,7 @@ async def test_list_skills_uses_custom_skill_offset_after_builtin_skills(session
         name="内置 Skill",
         summary="简介",
         content="内容",
+        metadata_json={},
         is_enabled=True,
         source="builtin",
         references=(),

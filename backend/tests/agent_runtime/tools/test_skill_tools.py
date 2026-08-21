@@ -21,12 +21,20 @@ def _make_state():
     }
 
 
-def _skill(id="skill-1", name="pdf-processing", summary="摘要", content="# PDF 内容", is_enabled=True):
+def _skill(
+    id="skill-1",
+    name="pdf-processing",
+    summary="摘要",
+    content="# PDF 内容",
+    metadata_json=None,
+    is_enabled=True,
+):
     return SimpleNamespace(
         id=id,
         name=name,
         summary=summary,
         content=content,
+        metadata_json=metadata_json or {},
         is_enabled=is_enabled,
     )
 
@@ -108,6 +116,30 @@ async def test_activate_skill_returns_content_and_references():
     assert "# PDF 内容" in result
     assert "<skill_references>" in result
     assert "<ref>参考文档1</ref>" in result
+
+
+@pytest.mark.asyncio
+async def test_activate_skill_preserves_metadata_and_escapes_xml_fields():
+    from app.agent_runtime.tools.impls.skill.skill import ActivateSkillTool
+
+    tool = ActivateSkillTool(_state=_make_state())
+    skill = _skill(
+        name='research "draft"',
+        summary="对比 <榜单> & 指标",
+        metadata_json={"license": "MIT", "note": "a </skill_metadata> b"},
+    )
+    patches = _patch_env(_definition(["skill-1"]), skill, [_ref("A & B")])
+    with patch(
+        "app.agent_runtime.tools.impls.skill.skill.create_session",
+        AsyncMock(return_value=AsyncMock()),
+    ), patches[0], patches[1], patches[2]:
+        result = await tool.ainvoke({"skill_name": 'research "draft"'})
+
+    assert 'name="research &quot;draft&quot;"' in result
+    assert "<skill_summary>对比 &lt;榜单&gt; &amp; 指标</skill_summary>" in result
+    assert '"license":"MIT"' in result
+    assert "a &lt;/skill_metadata&gt; b" in result
+    assert "<ref>A &amp; B</ref>" in result
 
 
 @pytest.mark.asyncio

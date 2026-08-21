@@ -152,6 +152,73 @@ def test_zongheng_discovers_categories_returned_by_rank_api() -> None:
     ]
 
 
+def test_fanqie_book_reads_public_metrics_from_initial_state() -> None:
+    state = {
+        "page": {
+            "bookName": "番茄指标样书",
+            "authorName": "作者乙",
+            "abstract": "简介",
+            "readCount": 485984,
+            "wordNumber": 3203153,
+            "chapterTotal": 1586,
+        }
+    }
+    html = (
+        '<h1 class="info-name">番茄指标样书</h1>'
+        f"<script>window.__INITIAL_STATE__={json.dumps(state, ensure_ascii=False)};</script>"
+    )
+    client = FixtureClient(html={"fanqie:book": [FixtureResponse(html)]})
+
+    book = FanqieAdapter(client).read_opening("1002", 0).to_dict()
+
+    assert book["word_count"] == 3203153
+    assert book["chapter_count"] == 1586
+    assert book["metrics"] == {
+        "reading_count": 485984,
+        "favorite_count": None,
+        "recommendation_count": None,
+        "comment_count": None,
+        "rating": None,
+        "hot_score": None,
+        "rank_metric": None,
+    }
+    assert book["source_extra"]["readCount"] == 485984
+
+
+def test_qidian_book_maps_only_confirmed_public_metrics() -> None:
+    client = FixtureClient(
+        html={
+            "qidian:book": [
+                _qidian_page(
+                    {
+                        "bookInfo": {
+                            "bookName": "起点指标样书",
+                            "collect": 106,
+                            "recomAll": 140,
+                            "clickTotal": -1,
+                        },
+                        "seoBookCirclePost": {"bookCirclePostCount": 96},
+                    }
+                )
+            ]
+        }
+    )
+
+    book = QidianAdapter(client).read_opening("1001", 0).to_dict()
+
+    assert book["title"] == "起点指标样书"
+    assert book["metrics"] == {
+        "reading_count": None,
+        "favorite_count": 106,
+        "recommendation_count": 140,
+        "comment_count": 96,
+        "rating": None,
+        "hot_score": None,
+        "rank_metric": None,
+    }
+    assert book["source_extra"]["clickTotal"] == -1
+
+
 @pytest.mark.parametrize(
     ("adapter", "client", "book_id"),
     [

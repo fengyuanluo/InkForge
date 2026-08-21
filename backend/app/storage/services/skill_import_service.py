@@ -10,6 +10,7 @@ import io
 import posixpath
 import zipfile
 from dataclasses import dataclass
+from typing import Any
 
 import yaml
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,6 +37,7 @@ class ParsedSkill:
     name: str
     summary: str
     content: str
+    metadata: dict[str, Any]
     recognized: bool
 
 
@@ -95,10 +97,11 @@ def _parse_single_md(text: str, filename: str) -> ParsedSkill:
             name=str(frontmatter["name"]).strip(),
             summary=str(frontmatter["description"]).strip(),
             content=body,
+            metadata={key: value for key, value in frontmatter.items() if key not in {"name", "description"}},
             recognized=True,
         )
     stem = posixpath.splitext(posixpath.basename(_normalize_path(filename)))[0]
-    return ParsedSkill(name=stem, summary="", content=text, recognized=False)
+    return ParsedSkill(name=stem, summary="", content=text, metadata={}, recognized=False)
 
 
 def _extract_zip(content: bytes) -> dict[str, str]:
@@ -145,10 +148,11 @@ def _parse_skill_md(text: str, root: str) -> ParsedSkill:
             name=str(frontmatter["name"]).strip(),
             summary=str(frontmatter["description"]).strip(),
             content=body,
+            metadata={key: value for key, value in frontmatter.items() if key not in {"name", "description"}},
             recognized=True,
         )
     root_name = posixpath.basename(root.rstrip("/")) if root else "导入技能"
-    return ParsedSkill(name=root_name, summary="", content=text, recognized=False)
+    return ParsedSkill(name=root_name, summary="", content=text, metadata={}, recognized=False)
 
 
 async def import_skill(
@@ -185,6 +189,7 @@ async def import_skill(
         name=parsed.name,
         summary=parsed.summary,
         content=parsed.content,
+        metadata=parsed.metadata,
         is_enabled=False,
     )
     docs: list[SkillReferenceDoc] = []

@@ -29,6 +29,7 @@ def _to_response(skill) -> SkillResponse:
         name=skill.name,
         summary=skill.summary,
         content=skill.content,
+        metadata=skill.metadata_json,
         is_enabled=skill.is_enabled,
         is_complete=skill_service.is_skill_complete(skill),
         source=skill.source,
@@ -61,6 +62,7 @@ async def create_skill(
             name=data.name,
             summary=data.summary,
             content=data.content,
+            metadata=data.metadata,
             is_enabled=data.is_enabled,
         )
         return _to_response(skill)
@@ -142,6 +144,7 @@ async def update_skill(
             name=data.name,
             summary=data.summary,
             content=data.content,
+            metadata=data.metadata,
             is_enabled=data.is_enabled,
         )
         return _to_response(skill)

@@ -195,6 +195,22 @@ export function ImportSkillDialog({
           </Box>
         )}
 
+        {Object.keys(result.skill.metadata).length > 0 && (
+          <Box mb="3">
+            <Text
+              size="1"
+              color="gray"
+              mb="1"
+              className="import-skill-label"
+            >
+              {t("settingsExtra.skills.metadata")}
+            </Text>
+            <Box className="import-skill-metadata-preview">
+              {JSON.stringify(result.skill.metadata, null, 2)}
+            </Box>
+          </Box>
+        )}
+
         {result.referenceDocs.length > 0 && (
           <Box>
             <Text

@@ -1,5 +1,8 @@
 """Skill 工具：按需激活技能与读取参考文档。"""
 
+from html import escape
+import json
+
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -78,11 +81,26 @@ class ActivateSkillTool(AgentTool):
             await session.close()
 
         body = (skill.content or "").strip()
-        references = "\n".join(f"  <ref>{doc.title}</ref>" for doc in docs if doc.title)
+        references = "\n".join(
+            f"  <ref>{escape(doc.title, quote=False)}</ref>"
+            for doc in docs
+            if doc.title
+        )
         references_block = ""
         if references:
             references_block = f"\n<skill_references>\n{references}\n</skill_references>"
-        return f'<skill_content name="{skill.name}">\n{body}{references_block}\n</skill_content>'
+        metadata = escape(
+            json.dumps(
+                skill.metadata_json or {}, ensure_ascii=False, separators=(",", ":")
+            ),
+            quote=False,
+        )
+        return (
+            f'<skill_content name="{escape(skill.name, quote=True)}">\n'
+            f"<skill_summary>{escape(skill.summary, quote=False)}</skill_summary>\n"
+            f"<skill_metadata>{metadata}</skill_metadata>\n"
+            f"{body}{references_block}\n</skill_content>"
+        )
 
 
 @ToolRegistry.register
@@ -116,7 +134,8 @@ class ReferenceSkillTool(AgentTool):
 
         body = (doc.content or "").strip()
         return (
-            f'<reference_content skill_name="{skill.name}" reference_name="{doc.title}">\n'
+            f'<reference_content skill_name="{escape(skill.name, quote=True)}" '
+            f'reference_name="{escape(doc.title, quote=True)}">\n'
             f"{body}\n"
             f"</reference_content>"
         )

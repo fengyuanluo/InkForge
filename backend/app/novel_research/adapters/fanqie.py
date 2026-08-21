@@ -8,11 +8,13 @@ from urllib.parse import urlencode, urljoin
 from app.novel_research.common import (
     Adapter,
     Book,
+    BookMetrics,
     Chapter,
     HarvestError,
     attr,
     count_value,
     first,
+    non_negative_count,
     text_of,
 )
 
@@ -22,6 +24,17 @@ class FanqieAdapter(Adapter):
     base = "https://fanqienovel.com"
     gender_names = {"1": "男频", "0": "女频"}
     rank_type_names = {"1": "新书榜", "2": "阅读榜"}
+
+    @staticmethod
+    def page_state(source: str) -> dict[str, Any]:
+        marker = "window.__INITIAL_STATE__="
+        try:
+            start = source.index(marker) + len(marker)
+            state, _ = json.JSONDecoder().raw_decode(source[start:])
+        except (ValueError, json.JSONDecodeError):
+            return {}
+        page = state.get("page") if isinstance(state, dict) else None
+        return page if isinstance(page, dict) else {}
 
     def ranks(self) -> list[dict[str, Any]]:
         tree, response = self.client.html(
@@ -82,8 +95,9 @@ class FanqieAdapter(Adapter):
         if not re.fullmatch(r"\d+", book_id):
             raise HarvestError(f"fanqie:book: invalid source_book_id: {book_id}")
         url = f"{self.base}/page/{book_id}"
-        tree, _ = self.client.html(url, stage="fanqie:book")
-        title = text_of(first(tree, [".info-name", "h1"]))
+        tree, response = self.client.html(url, stage="fanqie:book")
+        page = self.page_state(response.text)
+        title = text_of(first(tree, [".info-name", "h1"])) or page.get("bookName")
         if not title:
             raise HarvestError(f"fanqie:book: missing title for {book_id}")
         labels = [
@@ -102,20 +116,38 @@ class FanqieAdapter(Adapter):
         )
         if cover and cover.startswith("//"):
             cover = "https:" + cover
+        cover = cover or page.get("thumbUrl")
+        page_word_count = non_negative_count(page.get("wordNumber"))
+        page_chapter_count = non_negative_count(page.get("chapterTotal"))
         book = Book(
             source_site=self.site,
             source_book_id=book_id,
             title=title,
-            author=text_of(first(tree, [".author-name", ".info-author"])),
+            author=text_of(first(tree, [".author-name", ".info-author"]))
+            or page.get("authorName"),
             categories=labels[:1],
             tags=labels[1:],
-            introduction=text_of(first(tree, [".page-abstract-content", ".abstract"])),
+            introduction=text_of(first(tree, [".page-abstract-content", ".abstract"]))
+            or page.get("abstract"),
             status=status,
             status_raw=status,
             cover_url=cover,
-            word_count=count_value(text_of(tree.css_first(".info-count-word"))),
+            word_count=(
+                page_word_count
+                if page_word_count is not None
+                else count_value(text_of(tree.css_first(".info-count-word")))
+            ),
+            chapter_count=page_chapter_count,
             updated_at=text_of(tree.css_first(".info-last-time")),
             official_url=url,
+            metrics=BookMetrics(
+                reading_count=non_negative_count(page.get("readCount")),
+            ),
+            source_extra={
+                key: page[key]
+                for key in ("readCount", "wordNumber", "chapterTotal")
+                if page.get(key) is not None
+            },
         )
         links: list[tuple[str, str]] = []
         for anchor in tree.css("a.chapter-item-title"):
@@ -124,7 +156,8 @@ class FanqieAdapter(Adapter):
             label = text_of(anchor) or ""
             if match and not label.startswith("最近更新"):
                 links.append((match.group(1), label))
-        book.chapter_count = len(links)
+        if book.chapter_count is None:
+            book.chapter_count = len(links)
         for chapter_id, label in links[:chapter_limit]:
             chapter_url = f"{self.base}/reader/{chapter_id}"
             content = (
@@ -197,14 +230,10 @@ class FanqieAdapter(Adapter):
             offset += len(page)
         if not entries:
             raise HarvestError(f"fanqie:rank: no records for {rank_id}")
-        items = [
-            {
-                "rank": position,
-                "metric": None,
-                "book": self.book(book_id, chapters).to_dict(),
-            }
-            for book_id, position in entries[:limit]
-        ]
+        items = []
+        for book_id, position in entries[:limit]:
+            book = self.book(book_id, chapters)
+            items.append({"rank": position, "metric": None, "book": book.to_dict()})
         gender, rank_type, category = rank_id.split("_")
         gender_name = self.gender_names[gender]
         rank_type_name = self.rank_type_names[rank_type]

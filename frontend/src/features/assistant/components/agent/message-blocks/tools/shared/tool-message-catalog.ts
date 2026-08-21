@@ -36,6 +36,9 @@ export const REGISTERED_TOOL_NAMES = [
   "delete_world_entry",
   "search_chapters",
   "update_index",
+  "discover_novel_rankings",
+  "list_ranked_novels",
+  "read_novel_opening",
   "write_plan",
   "activate_skill",
   "reference_skill",
@@ -51,7 +54,8 @@ export type ToolGroup =
   | "volume"
   | "context"
   | "plan"
-  | "skill";
+  | "skill"
+  | "research";
 
 export interface ToolDescriptorMeta {
   toolName: RegisteredToolName;
@@ -323,6 +327,27 @@ export const TOOL_DESCRIPTOR_META = {
     isExplore: false,
     contentMode: "hidden",
   },
+  discover_novel_rankings: {
+    toolName: "discover_novel_rankings",
+    group: "research",
+    tag: "novel-rankings",
+    isExplore: true,
+    contentMode: "expandable",
+  },
+  list_ranked_novels: {
+    toolName: "list_ranked_novels",
+    group: "research",
+    tag: "ranked-novels",
+    isExplore: true,
+    contentMode: "expandable",
+  },
+  read_novel_opening: {
+    toolName: "read_novel_opening",
+    group: "research",
+    tag: "novel-opening",
+    isExplore: true,
+    contentMode: "expandable",
+  },
   write_plan: {
     toolName: "write_plan",
     group: "plan",
@@ -335,14 +360,14 @@ export const TOOL_DESCRIPTOR_META = {
     group: "skill",
     tag: "activate",
     isExplore: false,
-    contentMode: "hidden",
+    contentMode: "expandable",
   },
   reference_skill: {
     toolName: "reference_skill",
     group: "skill",
     tag: "reference",
     isExplore: false,
-    contentMode: "hidden",
+    contentMode: "expandable",
   },
 } satisfies Record<RegisteredToolName, ToolDescriptorMeta>;
 
