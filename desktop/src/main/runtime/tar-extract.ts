@@ -385,6 +385,25 @@ async function clearExtraEntries(dir: string, keepDir: string, onLog?: (message:
 
 export const CORE_DATA_ENTRIES = new Set(["openfic.db", ".key", "covers"]);
 
+export const INSTANCE_DATA_ENTRIES = new Set([
+  ".env",
+  ".key",
+  "openfic.db",
+  "openfic.db-wal",
+  "openfic.db-shm",
+  "checkpoints.db",
+  "checkpoints.db-wal",
+  "checkpoints.db-shm",
+  "covers",
+  "character-images",
+  "agent-attachments",
+  "chapter-exports",
+  "lancedb",
+  "fastembed_cache",
+  "model_provider_catalog",
+  "icons",
+]);
+
 function isCoreDataPath(relativePath: string): boolean {
   return CORE_DATA_ENTRIES.has(relativePath.split(/[\\/]/)[0]);
 }
