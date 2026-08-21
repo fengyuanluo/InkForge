@@ -271,6 +271,10 @@
   margin: 0 auto;
 }
 
+.rt-TextAreaRoot.skills-settings-skill-metadata .rt-TextAreaInput {
+  font-family: var(--code-font-family, ui-monospace, monospace);
+}
+
 .skills-settings--settings .skills-settings-editor-content {
   max-width: 560px;
   margin: 0 auto;

@@ -2,7 +2,9 @@
 """Skill 数据模型。"""
 
 from datetime import UTC, datetime
+from typing import Any
 
+from sqlalchemy import Column, JSON
 from sqlmodel import Field, SQLModel
 
 from app.core.ids import generate_id
@@ -17,6 +19,10 @@ class Skill(SQLModel, table=True):
     name: str = Field(default="", max_length=200)
     summary: str = Field(default="")
     content: str = Field(default="")
+    metadata_json: dict[str, Any] = Field(
+        default_factory=dict,
+        sa_column=Column("metadata", JSON, nullable=False, default=dict),
+    )
     is_enabled: bool = Field(default=False, index=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

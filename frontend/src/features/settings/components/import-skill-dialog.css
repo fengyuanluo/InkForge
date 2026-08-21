@@ -36,6 +36,18 @@
   border-radius: var(--radius-2);
 }
 
+.import-skill-metadata-preview {
+  max-height: 180px;
+  overflow: auto;
+  padding: 8px;
+  border: 1px solid var(--gray-5);
+  border-radius: var(--radius-2);
+  font-family: var(--code-font-family, ui-monospace, monospace);
+  font-size: var(--font-size-1);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .import-skill-preview-footer {
   width: 100%;
 }

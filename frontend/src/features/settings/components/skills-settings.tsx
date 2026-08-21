@@ -63,6 +63,7 @@ interface SkillFormState {
   name: string;
   summary: string;
   content: string;
+  metadataText: string;
 }
 
 interface SkillsSettingsProps {
@@ -95,7 +96,20 @@ const EMPTY_FORM: SkillFormState = {
   name: "",
   summary: "",
   content: "",
+  metadataText: "{}",
 };
+
+function parseSkillMetadata(value: string): Record<string, unknown> | null {
+  if (!value.trim()) return {};
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : null;
+  } catch {
+    return null;
+  }
+}
 
 function toFormState(skill: Skill | null): SkillFormState {
   if (!skill) return EMPTY_FORM;
@@ -103,6 +117,7 @@ function toFormState(skill: Skill | null): SkillFormState {
     name: skill.name,
     summary: skill.summary,
     content: skill.content,
+    metadataText: JSON.stringify(skill.metadata, null, 2),
   };
 }
 
@@ -299,12 +314,16 @@ export function SkillsSettings({
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ skillDbId, payload }: { skillDbId: string; payload: SkillFormState }) =>
-      updateSkill(skillDbId, {
+    mutationFn: ({ skillDbId, payload }: { skillDbId: string; payload: SkillFormState }) => {
+      const metadata = parseSkillMetadata(payload.metadataText);
+      if (metadata === null) throw new Error("Skill metadata must be a JSON object");
+      return updateSkill(skillDbId, {
         name: payload.name,
         summary: payload.summary,
         content: payload.content,
-      }),
+        metadata,
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["skills"] });
     },
@@ -1277,9 +1296,13 @@ function SkillEditor({
   const [lastSaved, setLastSaved] = useState<string>(() => JSON.stringify(toFormState(skill)));
   const [isSaving, setIsSaving] = useState(false);
   const tokenCount = useMemo(() => countTokens(form.content), [form.content]);
+  const metadataIsValid = useMemo(
+    () => parseSkillMetadata(form.metadataText) !== null,
+    [form.metadataText],
+  );
 
   const hasUnsavedChanges = JSON.stringify(form) !== lastSaved;
-  const canSave = hasUnsavedChanges && !isSaving;
+  const canSave = hasUnsavedChanges && metadataIsValid && !isSaving;
 
   const handleSave = useCallback(async () => {
     if (isReadonly || !canSave) return;
@@ -1316,6 +1339,36 @@ function SkillEditor({
               placeholder={t("settingsExtra.skills.namePlaceholder")}
               disabled={isAgentSettingsLocked || isReadonly}
             />
+          </Box>
+
+          <Box>
+            <Text
+              size="2"
+              weight="medium"
+              as="label"
+            >
+              {t("settingsExtra.skills.metadata")}
+            </Text>
+            <TextArea
+              mt="2"
+              value={form.metadataText}
+              onChange={(e) => setForm((prev) => ({ ...prev, metadataText: e.target.value }))}
+              placeholder="{}"
+              rows={6}
+              spellCheck={false}
+              className="skills-settings-skill-metadata"
+              disabled={isAgentSettingsLocked || isReadonly}
+            />
+            {!metadataIsValid ? (
+              <Text
+                as="p"
+                size="1"
+                color="red"
+                mt="1"
+              >
+                {t("settingsExtra.skills.metadataInvalid")}
+              </Text>
+            ) : null}
           </Box>
 
           <Box>

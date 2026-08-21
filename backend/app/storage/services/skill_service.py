@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from collections.abc import Sequence
 from typing import Protocol
+from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,6 +28,7 @@ class SkillData(Protocol):
     name: str
     summary: str
     content: str
+    metadata_json: dict[str, Any]
     is_enabled: bool
     source: str
     created_at: datetime
@@ -74,6 +76,7 @@ def _apply_builtin_enabled_overrides(
             name=skill.name,
             summary=skill.summary,
             content=skill.content,
+            metadata_json=skill.metadata_json,
             is_enabled=enabled_overrides.get(skill.id, skill).is_enabled,
             references=skill.references,
             created_at=skill.created_at,
@@ -135,6 +138,7 @@ async def create_skill(
     name: str = "",
     summary: str = "",
     content: str = "",
+    metadata: dict[str, Any] | None = None,
     is_enabled: bool = False,
 ) -> Skill:
     unique_name = await _ensure_unique_name(session, name)
@@ -142,6 +146,7 @@ async def create_skill(
         name=unique_name,
         summary=summary,
         content=content,
+        metadata_json=metadata or {},
         is_enabled=is_enabled,
     )
     if skill.is_enabled and not is_skill_complete(skill):
@@ -156,6 +161,7 @@ async def fork_skill(session: AsyncSession, skill_db_id: str) -> Skill:
         name=f"{source.name}- Fork",
         summary=source.summary,
         content=source.content,
+        metadata=source.metadata_json,
     )
     reference_docs = await list_reference_docs(session, skill_db_id)
     for reference_doc in reference_docs:
@@ -239,6 +245,7 @@ async def update_skill(
     name: str | None = None,
     summary: str | None = None,
     content: str | None = None,
+    metadata: dict[str, Any] | None = None,
     is_enabled: bool | None = None,
 ) -> Skill:
     skill = await get_skill(session, skill_db_id)
@@ -258,6 +265,8 @@ async def update_skill(
         skill.summary = summary
     if content is not None:
         skill.content = content
+    if metadata is not None:
+        skill.metadata_json = metadata
     if is_enabled is not None:
         skill.is_enabled = is_enabled
 

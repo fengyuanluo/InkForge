@@ -198,14 +198,11 @@ class JjwxcAdapter(Adapter):
                 entries.append((book_id, integer(text_of(cells[0])) if cells else None))
         if not entries:
             raise HarvestError(f"jjwxc:rank: no records for {rank_id}")
-        items = [
-            {
-                "rank": position or index + 1,
-                "metric": None,
-                "book": self.book(book_id, chapters).to_dict(),
-            }
-            for index, (book_id, position) in enumerate(entries[:limit])
-        ]
+        items = []
+        for index, (book_id, position) in enumerate(entries[:limit]):
+            rank = position or index + 1
+            book = self.book(book_id, chapters)
+            items.append({"rank": rank, "metric": None, "book": book.to_dict()})
         ranking = {
             "site": self.site,
             "rank_id": rank_id,

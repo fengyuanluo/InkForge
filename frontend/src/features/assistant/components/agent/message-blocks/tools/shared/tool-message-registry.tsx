@@ -51,6 +51,8 @@ import {
 } from "../orchestration/recycle-subagent-tool-message";
 import { PlanToolMessage } from "../plan/plan-tool-message";
 import { getPlanToolDisplayConfig } from "../plan/plan-tool-message.utils";
+import { NovelResearchToolMessage } from "../research/novel-research-tool-message";
+import { SkillToolMessage } from "../skill/skill-tool-message";
 import { WorldEntryToolMessage } from "../world-entry/world-entry-tool-message";
 import {
   getExploreToolNames as getCatalogExploreToolNames,
@@ -82,6 +84,7 @@ import {
   getStreamingData,
   getToolRef,
   getToolResultData,
+  getToolResultRecord,
   getVolumeList,
   getVolumePayload,
   getWorldEntryList,
@@ -395,6 +398,53 @@ const TOOL_REGISTRY = {
     icon: Network,
     getTitle: () => i18n.t("assistant.tools.updateIndex"),
   },
+  discover_novel_rankings: {
+    toolName: "discover_novel_rankings",
+    group: "research",
+    tag: "novel-rankings",
+    isExplore: true,
+    contentMode: "expandable",
+    icon: BookSearch,
+    getTitle: () => i18n.t("assistant.tools.discoverNovelRankings"),
+    getDetail: (message) => {
+      const data = getToolResultRecord(message);
+      return data && typeof data.total_matches === "number"
+        ? i18n.t("assistant.tools.rankingCount", { count: data.total_matches })
+        : undefined;
+    },
+    render: (message) => <NovelResearchToolMessage message={message} />,
+  },
+  list_ranked_novels: {
+    toolName: "list_ranked_novels",
+    group: "research",
+    tag: "ranked-novels",
+    isExplore: true,
+    contentMode: "expandable",
+    icon: ListOrdered,
+    getTitle: () => i18n.t("assistant.tools.listRankedNovels"),
+    getDetail: (message) => {
+      const data = getToolResultRecord(message);
+      return data && Array.isArray(data.items)
+        ? i18n.t("assistant.tools.novelCount", { count: data.items.length })
+        : undefined;
+    },
+    render: (message) => <NovelResearchToolMessage message={message} />,
+  },
+  read_novel_opening: {
+    toolName: "read_novel_opening",
+    group: "research",
+    tag: "novel-opening",
+    isExplore: true,
+    contentMode: "expandable",
+    icon: BookOpen,
+    getTitle: () => i18n.t("assistant.tools.readNovelOpening"),
+    getDetail: (message) => {
+      const data = getToolResultRecord(message);
+      const book = data && isRecord(data.book) ? data.book : null;
+      return book ? asString(book.title) : undefined;
+    },
+    render: (message) => <NovelResearchToolMessage message={message} />,
+  },
   list_volumes: {
     toolName: "list_volumes",
     group: "volume",
@@ -628,18 +678,19 @@ const TOOL_REGISTRY = {
     group: "skill",
     tag: "activate",
     isExplore: false,
-    contentMode: "hidden",
+    contentMode: "expandable",
     icon: Sparkles,
     getTitle: () => i18n.t("assistant.tools.activateSkill"),
     getDetail: (message) =>
       getSkillArg(message, "skill_name") ?? i18n.t("assistant.tools.skillNotFound"),
+    render: (message) => <SkillToolMessage message={message} />,
   },
   reference_skill: {
     toolName: "reference_skill",
     group: "skill",
     tag: "reference",
     isExplore: false,
-    contentMode: "hidden",
+    contentMode: "expandable",
     icon: BookMarked,
     getTitle: () => i18n.t("assistant.tools.referenceSkill"),
     getDetail: (message) => {
@@ -648,6 +699,7 @@ const TOOL_REGISTRY = {
       if (skillName && refName) return `${skillName}/${refName}`;
       return skillName ?? refName;
     },
+    render: (message) => <SkillToolMessage message={message} />,
   },
 } satisfies Record<RegisteredToolName, ToolDescriptor>;
 

@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import yaml
 from loguru import logger
@@ -33,6 +34,7 @@ class BuiltinSkill:
     name: str
     summary: str
     content: str
+    metadata_json: dict[str, Any]
     is_enabled: bool
     references: tuple[BuiltinSkillReference, ...]
     created_at: datetime
@@ -69,6 +71,12 @@ def _load_builtin_skill(yaml_path: Path) -> BuiltinSkill | None:
     if not skill_id.startswith(BUILTIN_SKILL_ID_PREFIX):
         logger.warning(f"内置 Skill ID 前缀无效: path={yaml_path}, id={skill_id}")
         return None
+
+    metadata = {
+        key: value
+        for key, value in data.items()
+        if key not in {"id", "name", "summary", "description", "content", "is_enabled", "references"}
+    }
 
     is_enabled = data.get("is_enabled", True)
     if not isinstance(is_enabled, bool):
@@ -112,6 +120,7 @@ def _load_builtin_skill(yaml_path: Path) -> BuiltinSkill | None:
         name=name,
         summary=summary,
         content=content,
+        metadata_json=metadata,
         is_enabled=is_enabled,
         references=tuple(references),
         created_at=modified_at,

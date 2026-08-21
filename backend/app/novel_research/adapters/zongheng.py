@@ -265,14 +265,13 @@ class ZonghengAdapter(Adapter):
             page_num += 1
         if not records:
             raise HarvestError(f"zongheng:rank: no records for {rank_id}")
-        items = [
-            {
-                "rank": integer(record.get("orderNo")) or index + 1,
-                "metric": record.get("number"),
-                "book": self.book(record, chapters).to_dict(),
-            }
-            for index, record in enumerate(records[:limit])
-        ]
+        items = []
+        for index, record in enumerate(records[:limit]):
+            rank = integer(record.get("orderNo")) or index + 1
+            metric = record.get("number")
+            book = self.book(record, chapters)
+            book.metrics.rank_metric = metric
+            items.append({"rank": rank, "metric": metric, "book": book.to_dict()})
         category_name = next(
             (
                 clean(item.get("cateFineName"))

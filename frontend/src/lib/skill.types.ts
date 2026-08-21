@@ -5,6 +5,7 @@ export interface Skill {
   name: string;
   summary: string;
   content: string;
+  metadata: Record<string, unknown>;
   isEnabled: boolean;
   isComplete: boolean;
   source: "builtin" | "custom";
@@ -16,6 +17,7 @@ export interface SkillCreate {
   name: string;
   summary: string;
   content: string;
+  metadata?: Record<string, unknown>;
   isEnabled?: boolean;
 }
 
@@ -23,6 +25,7 @@ export interface SkillUpdate {
   name?: string;
   summary?: string;
   content?: string;
+  metadata?: Record<string, unknown>;
   isEnabled?: boolean;
 }
 

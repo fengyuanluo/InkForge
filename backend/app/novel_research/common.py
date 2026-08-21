@@ -40,6 +40,15 @@ def count_value(value: Any) -> int | None:
     return round(float(match.group(1)) * multiplier)
 
 
+def non_negative_count(value: Any) -> int | None:
+    if value in (None, ""):
+        return None
+    normalized = str(value).strip()
+    if normalized.startswith("-"):
+        return None
+    return count_value(normalized)
+
+
 def text_of(node: Node | None) -> str | None:
     return clean(node.text(separator="\n")) if node else None
 
@@ -91,6 +100,17 @@ class Chapter:
 
 
 @dataclass
+class BookMetrics:
+    reading_count: int | None = None
+    favorite_count: int | None = None
+    recommendation_count: int | None = None
+    comment_count: int | None = None
+    rating: int | float | str | None = None
+    hot_score: int | float | str | None = None
+    rank_metric: int | float | str | None = None
+
+
+@dataclass
 class Book:
     source_site: str
     source_book_id: str
@@ -107,6 +127,7 @@ class Book:
     updated_at: str | None = None
     official_url: str | None = None
     chapters: list[Chapter] = field(default_factory=list)
+    metrics: BookMetrics = field(default_factory=BookMetrics)
     source_extra: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

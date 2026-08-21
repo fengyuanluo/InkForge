@@ -439,6 +439,7 @@ function transformSkill(raw: Record<string, unknown>): Skill {
     name: raw.name as string,
     summary: raw.summary as string,
     content: raw.content as string,
+    metadata: (raw.metadata as Record<string, unknown>) ?? {},
     isEnabled: raw.is_enabled as boolean,
     isComplete: raw.is_complete as boolean,
     source: raw.source as "builtin" | "custom",
@@ -473,6 +474,7 @@ export async function createSkill(data: SkillCreate): Promise<Skill> {
     name: data.name,
     summary: data.summary,
     content: data.content,
+    metadata: data.metadata ?? {},
     is_enabled: data.isEnabled ?? false,
   });
   return transformSkill(response.data);
@@ -498,6 +500,7 @@ export async function updateSkill(skillDbId: string, data: SkillUpdate): Promise
     name: data.name,
     summary: data.summary,
     content: data.content,
+    metadata: data.metadata,
     is_enabled: data.isEnabled,
   });
   return transformSkill(response.data);

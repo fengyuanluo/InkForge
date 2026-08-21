@@ -216,6 +216,31 @@ export function getToolResultData(message: AgentMessage): unknown {
   return message.toolResult?.data ?? message.toolResult;
 }
 
+export function getToolResultRecord(message: AgentMessage): Record<string, unknown> | null {
+  const value = getToolResultData(message);
+  if (isRecord(value)) {
+    const nested = value.data;
+    if (isRecord(nested)) return nested;
+    return value;
+  }
+  if (typeof value !== "string") return null;
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return isRecord(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+export function getToolResultText(message: AgentMessage): string | undefined {
+  const value = getToolResultData(message);
+  if (typeof value === "string") return value;
+  if (isRecord(value)) {
+    return asString(value.message) ?? asString(value.content);
+  }
+  return undefined;
+}
+
 export function getNestedRecord(
   data: Record<string, unknown>,
   key: string,

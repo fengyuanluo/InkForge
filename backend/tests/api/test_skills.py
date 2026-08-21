@@ -15,12 +15,17 @@ async def test_create_and_list_skills(client: AsyncClient) -> None:
             "name": "测试技能",
             "summary": "简述",
             "content": "技能内容",
+            "metadata": {"license": "MIT", "allowed-tools": ["Read", "Search"]},
             "is_enabled": True,
         },
     )
     assert response.status_code == 201
     data = response.json()
     assert data["name"] == "测试技能"
+    assert data["metadata"] == {
+        "license": "MIT",
+        "allowed-tools": ["Read", "Search"],
+    }
     assert data["is_enabled"] is True
     assert data["is_complete"] is True
     assert "skill_id" not in data
@@ -157,6 +162,7 @@ async def test_fork_skill_copies_custom_skill_and_reference_docs(client: AsyncCl
             "name": "原技能",
             "summary": "原简述",
             "content": "原技能内容",
+            "metadata": {"license": "MIT", "compatibility": "OpenFic"},
             "is_enabled": True,
         },
     )
@@ -178,6 +184,7 @@ async def test_fork_skill_copies_custom_skill_and_reference_docs(client: AsyncCl
     assert fork["name"] == "原技能- Fork"
     assert fork["summary"] == source["summary"]
     assert fork["content"] == source["content"]
+    assert fork["metadata"] == source["metadata"]
     assert fork["source"] == "custom"
     assert fork["is_enabled"] is False
 
@@ -254,14 +261,22 @@ async def test_update_skill_keeps_same_name(client: AsyncClient) -> None:
 
     update_response = await client.patch(
         f"/api/v1/skills/{skill_id}",
-        json={"name": "技能", "summary": "新简述"},
+        json={"name": "技能", "summary": "新简述", "metadata": {"version": 2}},
     )
     assert update_response.status_code == 200
+    assert update_response.json()["metadata"] == {"version": 2}
 
 
 SKILL_MD = """---
 name: pdf-processing
 description: Extract PDF text, fill forms, merge files. Use when handling PDFs.
+license: Apache-2.0
+compatibility:
+  - OpenFic
+  - Codex
+metadata:
+  author: example
+  version: 1
 ---
 
 # PDF Processing
@@ -291,6 +306,11 @@ async def test_import_single_md_recognized(client: AsyncClient) -> None:
     assert data["is_recognized"] is True
     assert data["skill"]["name"] == "pdf-processing"
     assert data["skill"]["summary"].startswith("Extract PDF text")
+    assert data["skill"]["metadata"] == {
+        "license": "Apache-2.0",
+        "compatibility": ["OpenFic", "Codex"],
+        "metadata": {"author": "example", "version": 1},
+    }
     assert "Step 1" in data["skill"]["content"]
     assert data["reference_docs"] == []
 

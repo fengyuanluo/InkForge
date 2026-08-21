@@ -11,12 +11,14 @@ from selectolax.parser import HTMLParser
 from app.novel_research.common import (
     Adapter,
     Book,
+    BookMetrics,
     Chapter,
     HarvestError,
     attr,
     canonical_query,
     clean,
     integer,
+    non_negative_count,
     text_of,
 )
 
@@ -187,10 +189,22 @@ class QidianAdapter(Adapter):
             if item
         ]
         raw_status = info.get("bookStatus")
+        circle = data.get("seoBookCirclePost") or {}
+        source_extra = {
+            "rank_count": record.get("rankCnt"),
+            "rank_word_count": record.get("cnt"),
+            "collect": info.get("collect"),
+            "recomAll": info.get("recomAll"),
+            "clickTotal": info.get("clickTotal"),
+            "bookCirclePostCount": circle.get("bookCirclePostCount"),
+        }
         book = Book(
             source_site=self.site,
             source_book_id=book_id,
-            title=clean(info.get("bName") or record.get("bName")) or book_id,
+            title=clean(
+                info.get("bookName") or info.get("bName") or record.get("bName")
+            )
+            or book_id,
             author=clean(info.get("authorName") or record.get("bAuth")),
             categories=categories,
             tags=labels,
@@ -203,9 +217,14 @@ class QidianAdapter(Adapter):
             updated_at=clean(info.get("updTime")),
             official_url=f"https://www.qidian.com/book/{book_id}/",
             source_extra={
-                "rank_count": record.get("rankCnt"),
-                "rank_word_count": record.get("cnt"),
+                key: value for key, value in source_extra.items() if value is not None
             },
+            metrics=BookMetrics(
+                reading_count=non_negative_count(info.get("clickTotal")),
+                favorite_count=non_negative_count(info.get("collect")),
+                recommendation_count=non_negative_count(info.get("recomAll")),
+                comment_count=non_negative_count(circle.get("bookCirclePostCount")),
+            ),
         )
         if chapter_limit:
             catalog, _ = self.page_data(
@@ -309,14 +328,13 @@ class QidianAdapter(Adapter):
                 break
             records.extend(page)
             page_num += 1
-        items = [
-            {
-                "rank": integer(record.get("rankNum")) or index + 1,
-                "metric": record.get("rankCnt"),
-                "book": self.book(record, chapters).to_dict(),
-            }
-            for index, record in enumerate(records[:limit])
-        ]
+        items = []
+        for index, record in enumerate(records[:limit]):
+            rank = integer(record.get("rankNum")) or index + 1
+            book = self.book(record, chapters)
+            metric = record.get("rankCnt")
+            book.metrics.rank_metric = metric
+            items.append({"rank": rank, "metric": metric, "book": book.to_dict()})
         dimensions: dict[str, Any] = {"gender": {"id": "male", "name": "男频"}}
         if "catId" in filters:
             dimensions["category"] = {
